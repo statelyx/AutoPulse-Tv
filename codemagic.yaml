@@ -28,8 +28,10 @@ workflows:
     environment:
       xcode: latest
       ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.statelyxx.autopulsetv
+        provisioning_profiles:
+          - autopulsetv-carplay-audio-app-store
+        certificates:
+          - kombiqo-distribution
       vars:
         BUNDLE_ID: com.statelyxx.autopulsetv
     scripts:
