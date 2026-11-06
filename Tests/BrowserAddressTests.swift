@@ -1,5 +1,6 @@
 import Foundation
 import XCTest
+@testable import AutoPulseTV
 
 final class BrowserAddressTests: XCTestCase {
     func testAddressAndSearchPreserveUserInput() throws {
