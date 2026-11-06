@@ -30,6 +30,21 @@ final class AutoPulseTVUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Kendi videom"].waitForExistence(timeout: 5))
     }
     @MainActor
+    func testPhotoViewerOpensFromLibrary() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-store-page", "library"]
+        app.launch()
+        let photo = app.buttons["media-Göl kenarında"]
+        XCTAssertTrue(photo.waitForExistence(timeout: 90))
+        photo.tap()
+        XCTAssertTrue(app.buttons["photoAirPlay"].waitForExistence(timeout: 15))
+        XCTAssertTrue(app.descendants(matching: .any)["photoImageReady"].waitForExistence(timeout: 15))
+        capture("photo-viewer-fullscreen")
+        app.buttons["Kapat"].tap()
+        XCTAssertTrue(photo.waitForExistence(timeout: 10))
+        app.terminate()
+    }
+    @MainActor
     func testStoreScreenshots() {
         let app = XCUIApplication()
         XCUIDevice.shared.orientation = .portrait

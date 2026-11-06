@@ -20,12 +20,16 @@ STATE=$(xcrun simctl list devices -j | python3 -c 'import json,sys; print(next(d
 if [ "$STATE" != "Booted" ]; then xcrun simctl boot "$SIMULATOR_ID"; fi
 xcrun simctl bootstatus "$SIMULATOR_ID" -b
 xcrun simctl status_bar "$SIMULATOR_ID" override --time '9:41' --batteryState charged --batteryLevel 100
+set +e
 xcodebuild -project AutoPulseTV.xcodeproj -scheme AutoPulseTV \
   -destination "platform=iOS Simulator,id=$SIMULATOR_ID" \
   -derivedDataPath build/DerivedData -resultBundlePath build/TestResults.xcresult \
   -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=NO test 2>&1 | tee build/simulator-test.log
+PHONE_TEST_STATUS=$?
+set -e
 xcrun xcresulttool export attachments --path build/TestResults.xcresult --output-path build/phone-attachments
 python3 scripts/export_screenshots.py build/phone-attachments build/screenshots/iphone
+if [ "$PHONE_TEST_STATUS" -ne 0 ]; then exit "$PHONE_TEST_STATUS"; fi
 # Capture a real 13-inch iPad screen for the App Store universal app listing.
 IPAD_ID=$(xcrun simctl list devices available -j | python3 -c '
 import json,sys,re
@@ -40,10 +44,14 @@ STATE=$(xcrun simctl list devices -j | python3 -c 'import json,sys; print(next(d
 if [ "$STATE" != "Booted" ]; then xcrun simctl boot "$IPAD_ID"; fi
 xcrun simctl bootstatus "$IPAD_ID" -b
 xcrun simctl status_bar "$IPAD_ID" override --time '9:41' --batteryState charged --batteryLevel 100
+set +e
 xcodebuild -project AutoPulseTV.xcodeproj -scheme AutoPulseTV \
   -destination "platform=iOS Simulator,id=$IPAD_ID" \
   -derivedDataPath build/DerivedData -resultBundlePath build/iPadResults.xcresult \
   -only-testing:AutoPulseTVUITests/AutoPulseTVUITests/testStoreScreenshots \
   -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=NO test 2>&1 | tee build/ipad-test.log
+IPAD_TEST_STATUS=$?
+set -e
 xcrun xcresulttool export attachments --path build/iPadResults.xcresult --output-path build/ipad-attachments
 python3 scripts/export_screenshots.py build/ipad-attachments build/screenshots/ipad
+if [ "$IPAD_TEST_STATUS" -ne 0 ]; then exit "$IPAD_TEST_STATUS"; fi

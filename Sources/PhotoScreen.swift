@@ -77,27 +77,37 @@ struct PhotoScreen: View {
     }
 }
 
-struct ZoomPhoto: UIViewRepresentable {
+struct ZoomPhoto: View {
     let image: UIImage
-    func makeCoordinator() -> Coordinator { Coordinator() }
-    func makeUIView(context: Context) -> UIScrollView {
-        let scroll = UIScrollView()
-        scroll.minimumZoomScale = 1; scroll.maximumZoomScale = 5
-        scroll.delegate = context.coordinator
-        scroll.showsVerticalScrollIndicator = false; scroll.showsHorizontalScrollIndicator = false
-        let view = context.coordinator.imageView
-        view.contentMode = .scaleAspectFit
-        view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        scroll.addSubview(view)
-        return scroll
-    }
-    func updateUIView(_ scroll: UIScrollView, context: Context) {
-        let view = context.coordinator.imageView
-        if view.image !== image { scroll.setZoomScale(1, animated: false); view.image = image }
-        if scroll.zoomScale == 1 { view.frame = scroll.bounds }
-    }
-    final class Coordinator: NSObject, UIScrollViewDelegate {
-        let imageView = UIImageView()
-        func viewForZooming(in scrollView: UIScrollView) -> UIView? { imageView }
+    @State private var scale: CGFloat = 1
+    @State private var settledScale: CGFloat = 1
+    @State private var offset = CGSize.zero
+    @State private var settledOffset = CGSize.zero
+    var body: some View {
+        GeometryReader { geometry in
+            Image(uiImage: image).resizable().scaledToFit()
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                .scaleEffect(scale).offset(offset)
+                .gesture(MagnificationGesture()
+                    .onChanged { scale = min(5, max(1, settledScale * $0)) }
+                    .onEnded { _ in
+                        settledScale = scale
+                        if scale == 1 { offset = .zero; settledOffset = .zero }
+                    })
+                .simultaneousGesture(DragGesture()
+                    .onChanged { value in
+                        guard scale > 1 else { return }
+                        let limitX = geometry.size.width * (scale - 1) / 2
+                        let limitY = geometry.size.height * (scale - 1) / 2
+                        offset = CGSize(
+                            width: min(limitX, max(-limitX, settledOffset.width + value.translation.width)),
+                            height: min(limitY, max(-limitY, settledOffset.height + value.translation.height)))
+                    }
+                    .onEnded { _ in settledOffset = offset })
+                .accessibilityLabel("Fotoğraf")
+        }.clipped()
+            .onChange(of: image) { _, _ in
+                scale = 1; settledScale = 1; offset = .zero; settledOffset = .zero
+            }
     }
 }

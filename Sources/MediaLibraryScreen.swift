@@ -24,7 +24,7 @@ struct MediaLibraryScreen: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 22) {
+                VStack(alignment: .leading, spacing: 16) {
                     if !favoritesOnly { hero }
                     Picker("Medya türü", selection: $kind) {
                         ForEach(["Tümü", "Video", "Fotoğraf"], id: \.self) { Text($0) }
@@ -67,6 +67,7 @@ struct MediaLibraryScreen: View {
                 }.padding(20)
             }.background(Theme.background)
                 .navigationTitle(favoritesOnly ? "Favoriler" : "AutoPulse TV")
+                .navigationBarTitleDisplayMode(.inline)
                 .searchable(text: $query, prompt: "Kaynak veya grup ara")
                 .toolbar {
                     Button { add = true } label: { Image(systemName: "plus.circle.fill").font(.title3) }
@@ -82,16 +83,16 @@ struct MediaLibraryScreen: View {
         }
     }
     private var hero: some View {
-        VStack(alignment: .leading, spacing: 13) {
+        VStack(alignment: .leading, spacing: 10) {
             Label("SANA AİT BİR KOLEKSİYON", systemImage: "sparkles").font(.caption.bold()).foregroundStyle(.mint)
-            Text("Molanın oynatma listesi.").font(.system(size: 32, weight: .bold, design: .rounded))
-            Text("Videolar, fotoğraflar ve sevdiğin kaynaklar.\nHepsi aynı yerde.").font(.subheadline).foregroundStyle(.secondary)
+            Text("Molanın oynatma listesi.").font(.system(size: 28, weight: .bold, design: .rounded))
+            Text("Videoların ve fotoğrafların. Hepsi aynı yerde.").font(.subheadline).foregroundStyle(.secondary)
             HStack(spacing: 16) {
                 Label("\(library.sources.filter { $0.mediaKind == .video }.count) video", systemImage: "play.rectangle")
                 Label("\(library.sources.filter { $0.mediaKind == .photo }.count) fotoğraf", systemImage: "photo")
                 Spacer()
             }.font(.caption).foregroundStyle(.mint).padding(.top, 5)
-        }.frame(maxWidth: .infinity, alignment: .leading).padding(22)
+        }.frame(maxWidth: .infinity, alignment: .leading).padding(18)
             .background(LinearGradient(colors: [Color(red: 0.06, green: 0.22, blue: 0.23), Theme.panel], startPoint: .topLeading, endPoint: .bottomTrailing), in: RoundedRectangle(cornerRadius: 26))
     }
 }
@@ -111,7 +112,7 @@ struct MediaCard: View {
                     Spacer()
                     if source.isFavorite { Image(systemName: "heart.fill").foregroundStyle(.mint) }
                 }.font(.system(size: 9, weight: .bold)).padding(9).background(.black.opacity(0.6))
-            }.frame(height: 115).clipShape(RoundedRectangle(cornerRadius: 18))
+            }.frame(height: 105).clipShape(RoundedRectangle(cornerRadius: 18))
             Text(source.title).font(.subheadline.bold()).lineLimit(2).foregroundStyle(.white)
             Text(source.group).font(.caption).foregroundStyle(.secondary).lineLimit(1)
             if source.resumeTime > 5 && source.mediaKind == .video {

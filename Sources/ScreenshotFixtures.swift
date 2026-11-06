@@ -78,6 +78,7 @@ struct StoreScreenshotFrame: View {
             VStack(spacing: 0) {
                 VStack(spacing: 12) {
                     Text("AutoPulse TV").font(.system(size: 15, weight: .semibold)).foregroundStyle(.mint)
+                        .accessibilityIdentifier("storeScreenshotReady")
                     Text(copy.0).font(.system(size: geometry.size.width * 0.085, weight: .bold, design: .rounded))
                         .multilineTextAlignment(.center).lineSpacing(0).fixedSize(horizontal: false, vertical: true)
                     Text(copy.1).font(.system(size: geometry.size.width * 0.033)).foregroundStyle(.white.opacity(0.7)).multilineTextAlignment(.center)
@@ -97,7 +98,6 @@ struct StoreScreenshotFrame: View {
                 Spacer(minLength: 0)
             }.frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(LinearGradient(colors: [Color(red: 0.03, green: 0.17, blue: 0.20), Theme.background, Theme.background], startPoint: .topLeading, endPoint: .bottomTrailing))
-                .accessibilityIdentifier("storeScreenshotReady")
         }.ignoresSafeArea().statusBarHidden()
     }
 }

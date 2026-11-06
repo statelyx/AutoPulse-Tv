@@ -3,6 +3,9 @@ on:
   push:
     branches: [main]
   pull_request:
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   simulator:
     runs-on: macos-latest
@@ -23,3 +26,5 @@ jobs:
             build/*.log
             build/screenshots
             build/TestResults.xcresult
+            build/phone-attachments
+            build/ipad-attachments
