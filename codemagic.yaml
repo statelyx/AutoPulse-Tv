@@ -1,0 +1,56 @@
+workflows:
+  simulator:
+    name: ParkPlay simulator validation
+    instance_type: mac_mini_m2
+    max_build_duration: 30
+    environment:
+      xcode: latest
+    scripts:
+      - name: Generate Xcode project
+        script: |
+          set -euo pipefail
+          command -v xcodegen || brew install xcodegen
+          xcodegen generate
+      - name: Build simulator and capture actual app
+        script: bash scripts/simulator.sh
+    artifacts:
+      - build/screenshots/*.png
+      - build/simulator-build.log
+      - build/simulator-test.log
+      - build/TestResults.xcresult
+      - build/DerivedData/Build/Products/Debug-iphonesimulator/ParkPlay.app
+  testflight:
+    name: ParkPlay signed TestFlight build
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    integrations:
+      app_store_connect: ParkPlay App Store Connect
+    environment:
+      xcode: latest
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.statelyx.parkplay
+      vars:
+        BUNDLE_ID: com.statelyx.parkplay
+        # Use project-carplay.yml only after entitlement and compatible-car tests.
+        PROJECT_SPEC: project.yml
+    scripts:
+      - name: Generate project
+        script: |
+          set -euo pipefail
+          command -v xcodegen || brew install xcodegen
+          xcodegen generate --spec "$PROJECT_SPEC"
+      - name: Use configured signing identities
+        script: xcode-project use-profiles
+      - name: Archive and export
+        script: |
+          set -euo pipefail
+          xcode-project build-ipa --project ParkPlay.xcodeproj --scheme ParkPlay \
+            --archive-xcargs "CURRENT_PROJECT_VERSION=${BUILD_NUMBER}"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

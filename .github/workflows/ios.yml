@@ -1,0 +1,25 @@
+name: iOS verification
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  simulator:
+    runs-on: macos-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate project
+        run: |
+          command -v xcodegen || brew install xcodegen
+          xcodegen generate
+      - name: Build, test and capture
+        run: bash scripts/simulator.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: parkplay-verification
+          path: |
+            build/*.log
+            build/screenshots
+            build/TestResults.xcresult

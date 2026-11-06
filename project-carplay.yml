@@ -1,0 +1,26 @@
+# Explicit opt-in after Apple approves CarPlay Video entitlement.
+include:
+  - project.yml
+targets:
+  ParkPlay:
+    deploymentTarget: '27.0'
+    sources:
+      - CarPlay/CarPlaySceneDelegate.swift
+    entitlements:
+      path: CarPlay/ParkPlay.entitlements
+    info:
+      path: build/CarPlay-Info.plist
+      properties:
+        CFBundleDisplayName: ParkPlay
+        UILaunchScreen: {}
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true
+          UISceneConfigurations:
+            CPTemplateApplicationSceneSessionRoleApplication:
+              - UISceneClassName: CPTemplateApplicationScene
+                UISceneConfigurationName: ParkPlay CarPlay
+                UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).CarPlaySceneDelegate
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: NO
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: $(inherited) CARPLAY_ENABLED
