@@ -4,7 +4,6 @@ import AVFoundation
 
 /// Included by project.yml. Requires Apple's approved CarPlay entitlements.
 /// No phone framebuffer capture, ReplayKit, hidden web view or navigation-category workaround.
-@available(iOS 27.0, *)
 @MainActor
 final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate, CPSessionConfigurationDelegate {
     private var controller: CPInterfaceController?
@@ -37,13 +36,20 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
     private func refresh() {
         guard let controller, let configuration else { return }
         // Capability is not a motion/park signal. iOS/vehicle retain video-availability control.
-        let videoOK = configuration.supportsVideoPlayback
+        let videoOK: Bool
+        if #available(iOS 26.4, *) {
+            videoOK = configuration.supportsVideoPlayback
+        } else {
+            videoOK = false
+        }
         let sources = AppServices.library.sources.sorted { $0.isFavorite && !$1.isFavorite }
         let items = sources.prefix(CPListTemplate.maximumItemCount).map { source -> CPListItem in
             let detail = videoOK ? source.group : [source.group, "Ses"].filter { !$0.isEmpty }.joined(separator: " · ")
             let row = CPListItem(text: source.title, detailText: detail, image: UIImage(systemName: source.mediaKind == .photo ? "photo" : "play.rectangle"))
-            row.playbackConfiguration = CPPlaybackConfiguration(preferredPresentation: videoOK ? .video : .audio, playbackAction: .play,
-                elapsedTime: CMTime(seconds: source.resumeTime, preferredTimescale: 600), duration: .zero)
+            if #available(iOS 26.4, *) {
+                row.playbackConfiguration = CPPlaybackConfiguration(preferredPresentation: videoOK ? .video : .audio, playbackAction: .play,
+                    elapsedTime: CMTime(seconds: source.resumeTime, preferredTimescale: 600), duration: .zero)
+            }
             row.handler = { _, completion in
                 if let previous = AppServices.playback.source {
                     AppServices.library.recordPlayback(previous.id, seconds: AppServices.playback.position)
