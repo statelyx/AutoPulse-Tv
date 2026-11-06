@@ -94,9 +94,8 @@ struct DiscoverScreen: View {
     private func navigate() {
         let text = address.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { return }
-        if text.hasPrefix("https://") { open(text) }
-        else if !text.contains(" ") && text.contains(".") && !text.contains(":") { open("https://" + text) }
-        else if let query = text.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed.subtracting(CharacterSet(charactersIn: "&+#?"))) { open("https://www.google.com/search?q=" + query) }
+        do { destination = WebDestination(url: try SourceValidation.browserURL(text)); error = nil }
+        catch { self.error = error.localizedDescription }
     }
     private func open(_ value: String) {
         do { destination = WebDestination(url: try SourceValidation.secureURL(value)); error = nil }

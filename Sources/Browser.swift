@@ -46,7 +46,7 @@ final class BrowserModel: NSObject, ObservableObject, WKNavigationDelegate, WKUI
 
     func navigate(_ text: String) {
         do {
-            let url = try SourceValidation.secureURL(text)
+            let url = try SourceValidation.browserURL(text)
             error = nil
             webView.load(URLRequest(url: url))
         } catch { self.error = error.localizedDescription }
@@ -103,7 +103,7 @@ struct BrowserScreen: View {
             VStack(spacing: 0) {
                 HStack {
                     Image(systemName: "lock.shield").foregroundStyle(.mint)
-                    TextField("HTTPS adresi", text: $address)
+                    TextField("Ara veya HTTPS adresi gir", text: $address)
                         .textInputAutocapitalization(.never).autocorrectionDisabled().keyboardType(.URL)
                         .submitLabel(.go).onSubmit { model.navigate(address) }
                         .accessibilityIdentifier("browserAddress")

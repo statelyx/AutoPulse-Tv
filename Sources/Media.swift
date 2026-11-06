@@ -39,6 +39,19 @@ enum LocalMedia {
 }
 
 enum SourceValidation {
+    static func browserURL(_ input: String) throws -> URL {
+        let text = input.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { throw MediaError.invalidURL }
+        if text.contains("://") { return try secureURL(text) }
+        if !text.contains(where: \.isWhitespace), text.contains("."), !text.contains(":") {
+            return try secureURL("https://" + text)
+        }
+        var search = URLComponents(string: "https://www.google.com/search")!
+        search.queryItems = [URLQueryItem(name: "q", value: text)]
+        guard let url = search.url else { throw MediaError.invalidURL }
+        return url
+    }
+
     static func secureURL(_ text: String) throws -> URL {
         guard let url = URL(string: text.trimmingCharacters(in: .whitespacesAndNewlines)),
               url.scheme?.lowercased() == "https", let host = url.host, !host.isEmpty,

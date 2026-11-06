@@ -2,6 +2,25 @@ import XCTest
 
 final class AutoPulseTVUITests: XCTestCase {
     @MainActor
+    func testBrowserOpensAndReturnsToDiscover() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-ui-testing"]
+        app.launch()
+        app.tabBars.buttons["Keşfet"].tap()
+        let address = app.textFields["discoverAddress"]
+        XCTAssertTrue(address.waitForExistence(timeout: 10))
+        address.tap()
+        address.typeText("example.com")
+        app.buttons["Web sayfasını aç"].tap()
+        XCTAssertTrue(app.textFields["browserAddress"].waitForExistence(timeout: 10))
+        capture("browser-address-and-controls")
+        XCTAssertTrue(app.buttons["Geri"].exists)
+        XCTAssertTrue(app.buttons["Yenile"].exists || app.buttons["Durdur"].exists)
+        app.buttons["Bitti"].tap()
+        XCTAssertTrue(address.waitForExistence(timeout: 5))
+    }
+
+    @MainActor
     func testCreateSourceAndCaptureScreens() {
         let app = XCUIApplication()
         app.launchArguments = ["-ui-testing"]
