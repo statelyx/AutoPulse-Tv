@@ -1,0 +1,39 @@
+{
+  "date": "2026-11-06",
+  "source_commit": "adc9a2af926d9889677ee9a5a35b64493fce6183",
+  "github_pushed": true,
+  "last_completed_ci": {
+    "source": "d83a308",
+    "url": "https://github.com/statelyx/AutoPulse-Tv/actions/runs/42234417815",
+    "result": "success",
+    "unit_tests": 12,
+    "ui_tests": 2,
+    "failed_tests": 0,
+    "carplay_entitlements_test_seconds": 0.003,
+    "carplay_scene_test_seconds": 0.001
+  },
+  "latest_ci": {
+    "source": "adc9a2a",
+    "url": "https://github.com/statelyx/AutoPulse-Tv/actions/runs/42235670594",
+    "last_observed_status": "queued"
+  },
+  "codemagic": {
+    "index": 7,
+    "id": "6aede66d24e1ec237556d548",
+    "url": "https://codemagic.io/app/6aedac2730f39d49d7284dcf/build/6aede66d24e1ec237556d548",
+    "last_observed_status": "waiting",
+    "superseded_builds_cancelled": [
+      5,
+      6
+    ]
+  },
+  "apple": {
+    "audio_request": "submission confirmation observed",
+    "video_request": "submission confirmation observed",
+    "entitlement_approval_verified": false,
+    "profiles_regenerated_with_carplay": false,
+    "new_testflight_upload_verified": false,
+    "build_4_submitted": false,
+    "physical_carplay_tested": false
+  }
+}
