@@ -133,8 +133,14 @@ private struct PreviewLayoutMarker: UIViewRepresentable {
             super.init(frame: .zero)
             isUserInteractionEnabled = false
             isAccessibilityElement = false
+            isOpaque = false
+            backgroundColor = .clear
         }
         required init?(coder: NSCoder) { fatalError("init(coder:) is not used") }
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+            setNeedsLayout()
+        }
         override func layoutSubviews() {
             super.layoutSubviews()
             guard !signalled, window != nil, bounds.width > 0 else { return }
