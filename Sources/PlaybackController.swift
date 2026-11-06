@@ -73,7 +73,7 @@ final class PlaybackController: ObservableObject {
         statusObserver = nil
         waitingObserver = nil
         player.pause()
-        player.replaceCurrentItem(with: nil)
+        player.removeAllItems()
         source = nil
         loading = false
         pictureInPictureActive = false

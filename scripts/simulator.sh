@@ -12,14 +12,14 @@ if not phones: sys.exit("No installed iPhone simulator")
 preferred=[d for d in phones if "Pro Max" in d["name"]]
 print((preferred or phones)[0]["udid"])
 ')
-STATE=$(xcrun simctl list devices -j | python3 -c 'import json,sys; print(next(d["state"] for ds in json.load(sys.stdin)["devices"].values() for d in ds if d["udid"]==sys.argv[1]))' "$SIMULATOR_ID")
-if [ "$STATE" != "Booted" ]; then xcrun simctl boot "$SIMULATOR_ID"; fi
-xcrun simctl bootstatus "$SIMULATOR_ID" -b
-xcrun simctl status_bar "$SIMULATOR_ID" override --time '9:41' --batteryState charged --batteryLevel 100
 xcodebuild -project AutoPulseTV.xcodeproj -scheme AutoPulseTV -configuration Debug \
   -destination "platform=iOS Simulator,id=$SIMULATOR_ID" \
   -derivedDataPath build/DerivedData CODE_SIGNING_ALLOWED=NO build \
   2>&1 | tee build/simulator-build.log
+STATE=$(xcrun simctl list devices -j | python3 -c 'import json,sys; print(next(d["state"] for ds in json.load(sys.stdin)["devices"].values() for d in ds if d["udid"]==sys.argv[1]))' "$SIMULATOR_ID")
+if [ "$STATE" != "Booted" ]; then xcrun simctl boot "$SIMULATOR_ID"; fi
+xcrun simctl bootstatus "$SIMULATOR_ID" -b
+xcrun simctl status_bar "$SIMULATOR_ID" override --time '9:41' --batteryState charged --batteryLevel 100
 xcodebuild -project AutoPulseTV.xcodeproj -scheme AutoPulseTV \
   -destination "platform=iOS Simulator,id=$SIMULATOR_ID" \
   -derivedDataPath build/DerivedData -resultBundlePath build/TestResults.xcresult \

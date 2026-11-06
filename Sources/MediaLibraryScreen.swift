@@ -10,6 +10,7 @@ struct MediaLibraryScreen: View {
     @State private var group = "Tüm gruplar"
     @State private var add = false
     @State private var selected: MediaSource?
+    @State private var selectedPhoto: MediaSource?
     @State private var editing: MediaSource?
     private var groups: [String] { ["Tüm gruplar"] + Set(library.sources.map(\.group)).sorted() }
     private var sources: [MediaSource] {
@@ -48,7 +49,10 @@ struct MediaLibraryScreen: View {
                     } else {
                         LazyVGrid(columns: [GridItem(.adaptive(minimum: 155), spacing: 14)], spacing: 18) {
                             ForEach(sources) { source in
-                                Button { selected = source } label: { MediaCard(source: source) }
+                                Button {
+                                    if source.mediaKind == .photo { selectedPhoto = source }
+                                    else { selected = source }
+                                } label: { MediaCard(source: source) }
                                     .buttonStyle(.plain).accessibilityIdentifier("media-\(source.title)")
                                     .contextMenu {
                                         Button(source.isFavorite ? "Favoriden çıkar" : "Favorile", systemImage: "heart") { library.favorite(source) }
@@ -70,10 +74,8 @@ struct MediaLibraryScreen: View {
                 }
                 .sheet(isPresented: $add) { ImportHub() }
                 .sheet(item: $editing) { EditMediaScreen(source: $0) }
-                .sheet(item: $selected) { source in
-                    if source.mediaKind == .photo { PhotoScreen(source: source) }
-                    else { PlayerScreen(source: source) }
-                }
+                .sheet(item: $selected) { PlayerScreen(source: $0) }
+                .fullScreenCover(item: $selectedPhoto) { PhotoScreen(source: $0) }
                 .alert("Kütüphane", isPresented: Binding(get: { library.message != nil }, set: { if !$0 { library.message = nil } })) {
                     Button("Tamam") { library.message = nil }
                 } message: { Text(library.message ?? "") }
