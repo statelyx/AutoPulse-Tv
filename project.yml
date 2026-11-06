@@ -15,7 +15,6 @@ targets:
       path: CarPlay/AutoPulseTV.entitlements
       properties:
         com.apple.developer.carplay-audio: true
-        com.apple.developer.carplay-video: true
     info:
       path: Support/Info.plist
       properties:

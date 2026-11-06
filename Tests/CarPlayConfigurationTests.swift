@@ -26,6 +26,6 @@ final class CarPlayConfigurationTests: XCTestCase {
             try PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String: Any]
         )
         XCTAssertEqual(entitlements["com.apple.developer.carplay-audio"] as? Bool, true)
-        XCTAssertEqual(entitlements["com.apple.developer.carplay-video"] as? Bool, true)
+        XCTAssertNil(entitlements["com.apple.developer.carplay-video"], "Apple account guidance disallows combining audio and video entitlements")
     }
 }

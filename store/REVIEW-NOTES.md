@@ -17,3 +17,8 @@ Video in the vehicle is intended only while parked and when permitted by the ope
 7. If the receiver supports Video in the Car and system policy permits it while parked, select the imported video. Do not infer vehicle support from phone AirPlay availability.
 
 No fixed latency, universal vehicle compatibility or third-party DRM playback is claimed. Build-specific review notes must identify the new successful build number and any remaining entitlement/hardware limitation.
+
+
+## Account-specific entitlement update
+
+Apple approval correspondence supplied on 2026-11-06 states that audio and video entitlements must not be combined. This app uses only `com.apple.developer.carplay-audio` for mixed audio/video and visibility on audio CarPlay receivers. Enable CarPlay Audio App on com.statelyxx.autopulsetv and regenerate development/App Store profiles. Do not enable or sign this build with CarPlay Video App. Actual video presentation remains receiver/system dependent. Portal/profile updates and new TestFlight upload still require verification. This supersedes earlier dual-entitlement instructions in this document.

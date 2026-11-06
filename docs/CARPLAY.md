@@ -31,3 +31,8 @@ No fixed end-to-end delay is promised. Measure on real hardware: startup time, A
 - https://developer.apple.com/documentation/avfoundation/avplayer/usesexternalplaybackwhileexternalscreenisactive
 
 Use store/APPSTORE-CONNECT.md and store/REVIEW-NOTES.md for the new build. Build 4 predates this unified CarPlay configuration and must not be submitted as the new build.
+
+
+## Account-specific entitlement update
+
+Apple approval correspondence supplied on 2026-11-06 states that audio and video entitlements must not be combined. This app uses only `com.apple.developer.carplay-audio` for mixed audio/video and visibility on audio CarPlay receivers. Enable CarPlay Audio App on com.statelyxx.autopulsetv and regenerate development/App Store profiles. Do not enable or sign this build with CarPlay Video App. Actual video presentation remains receiver/system dependent. Portal/profile updates and new TestFlight upload still require verification. This supersedes earlier dual-entitlement instructions in this document.
