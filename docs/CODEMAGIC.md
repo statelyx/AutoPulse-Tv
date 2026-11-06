@@ -1,10 +1,16 @@
 # Codemagic başlangıcı
 
-Depo kökünde project.yml, codemagic.yaml, Sources ve Resources klasörleri birlikte bulunmalı. Tüm outputs klasörünü depo kökü olarak yükleme; AutoPulseTV klasörünün içeriğini kullan.
+Depo: https://github.com/statelyx/AutoPulse-Tv
+
+Dal: `main` · Proje türü: native iOS / XcodeGen · YAML: depo kökündeki `codemagic.yaml` · Scheme: `AutoPulseTV`.
+
+Kod ayrıca dosya yükleyerek taşınmaz; Codemagic bu GitHub deposunu klonlar. Hesapta uygulama kaydı eklemek, yalnız YAML dosyasını GitHub'a göndermekten ayrı bir adımdır.
+
+Varsayılan iOS projesi GitHub Actions'ta derlendi; 6 birim + 1 UI testi geçti. [Doğrulanmış çalışma](https://github.com/statelyx/AutoPulse-Tv/actions/runs/42200973648). Bu sonuç Codemagic hesabında uygulamanın eklenmiş veya derlenmiş olduğu anlamına gelmez.
 
 ## İlk derleme: simulator
 
-1. Codemagic uygulamasına GitHub deposunu bağla.
+1. Codemagic Applications sayfasında Add application adımından `statelyx/AutoPulse-Tv` deposunu seç. Mevcut GitHub bağlantısını kullan; farklı bir uygulamanın kayıtlı app_id değerini yeniden kullanma.
 2. Native iOS / codemagic.yaml seç; main dalını tara.
 3. `simulator` işini çalıştır. Apple sertifikası veya API anahtarı gerekmez.
 4. Build ve XCTest loglarını kontrol et. Başarısız test veya derleme varsa imzalı işe geçme.
@@ -24,4 +30,6 @@ Bu ayarlar doğrulanınca `testflight` işi imzalı IPA oluşturup Apple'a yükl
 
 ## Bu teslimde yapılmamış işlemler
 
-GitHub hesabı mevcut Git Credential Manager oturumuyla statelyx olarak doğrulandı. Proje https://github.com/statelyx/AutoPulse-Tv deposuna terminalden push edildi. Codemagic üzerinde bu işler çalıştırılmadı. TestFlight'a binary gönderilmedi. Windows'taki sözdizimi doğrulaması Apple SDK type-check, link veya runtime testi değildir.
+GitHub hesabı mevcut Git Credential Manager oturumuyla statelyx olarak doğrulandı ve kaynak kodu main dalına push edildi. GitHub Actions'ın varsayılan simülatör build'i ve testleri doğrulandı. Codemagic üzerinde uygulama ekleme veya build başlatma henüz yapılamadı: 6 Kasım 2026 tarihinde mevcut Codemagic sekmesine erişim kayıtlı izin/yönetilen politika kapısında reddedildi. Bu uygulama için Codemagic app_id veya build ID elde edilmedi. TestFlight'a binary gönderilmedi.
+
+Resmi referans: https://docs.codemagic.io/yaml-quick-start/building-a-native-ios-app/

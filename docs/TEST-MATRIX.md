@@ -1,6 +1,8 @@
 # Doğrulama matrisi
 
-Bu dosya testlerin geçtiği anlamına gelmez. Son gerçek durum VALIDATION.json içindedir.
+Yerel sözdizimi kontrolü VALIDATION.json içindedir. GitHub Actions'ın Apple SDK derleme/test sonucu ayrı olarak [CI kanıtında](verification/2026-11-06-ci.json) kaydedilir.
+
+6 Kasım 2026'da `2d9be98` commit'i için varsayılan iOS simülatör derlemesi, aşağıdaki 6 birim testi ve 1 UI testi geçti. Gerçek cihaz ve opsiyonel CarPlay testleri hâlâ bekliyor.
 
 ## Otomatik XCTest senaryoları
 

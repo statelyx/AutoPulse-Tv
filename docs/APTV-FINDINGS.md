@@ -2,6 +2,8 @@
 
 6 Kasım 2026. “Tüm internet tarandı” iddiası yoktur. Birincil belgeler, geliştirici güncellemeleri, GitHub sorunları ve haber aramaları incelendi. Kullanıcının iki X bağlantısı doğrudan erişimde 403 verdi; tweet içeriği okunmuş gibi kullanılmadı. Benzer isimli uygulamalar ve doğrulanmamış rehber siteleri ürünün resmi kaynağı sayılmadı.
 
+Sonraki doğrulama güncellemesi: varsayılan iPhone simülatör derlemesi, 6 birim testi ve 1 UI testi GitHub Actions run 42200973648'de geçti. Aşağıdaki tablo araştırma sırasında verilen kararları kaydeder; güncel test kanıtı verification/2026-11-06-ci.json içindedir. Bu başarılı çalışma araçtaki A/V senkronizasyonunu veya opsiyonel CarPlay build'ini doğrulamaz.
+
 ## İki farklı kırılma
 
 APTV'nin teknik açıklaması, eski CarPlay video yönteminin iOS 26.4'teki beklenmeyen izin davranışına dayandığını ve iOS 27.2'de kapatıldığını belirtiyor. Bu geliştirici açıklamasıdır; bağımsız yama analizi veya CVE kanıtı değildir. AutoPulseTV'da aynı davranışın gizlenerek sürdürülmesi uygulanmadı.

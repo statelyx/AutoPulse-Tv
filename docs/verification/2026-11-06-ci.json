@@ -1,0 +1,19 @@
+{
+  "source_commit": "2d9be98191d490cfcd5166f3dae5456ffc183a44",
+  "run_id": 42200973648,
+  "run_url": "https://github.com/statelyx/AutoPulse-Tv/actions/runs/42200973648",
+  "job": "simulator",
+  "result": "success",
+  "xcode": "26.6",
+  "simulator": "iPhone 17 Pro",
+  "simulator_os": "26.5",
+  "default_iphone_simulator_build": "passed",
+  "unit_tests": {"executed": 6, "failures": 0},
+  "ui_tests": {"executed": 1, "failures": 0},
+  "screenshot": "docs/images/library-iphone.png",
+  "artifact_name": "autopulsetv-verification",
+  "carplay_build_tested": false,
+  "physical_device_tested": false,
+  "codemagic_build_started": false,
+  "signed_ipa_uploaded": false
+}

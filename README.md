@@ -1,63 +1,109 @@
 # AutoPulse TV
 
-Yerel iPhone/iPad video kütüphanesi ve isteğe bağlı resmi CarPlay video entegrasyonu. Kaynak kodu teslimidir; Apple SDK ile derlendiği veya gerçek araçta çalıştığı henüz doğrulanmadı.
+[![iOS verification](https://github.com/statelyx/AutoPulse-Tv/actions/workflows/ios.yml/badge.svg?branch=main)](https://github.com/statelyx/AutoPulse-Tv/actions/workflows/ios.yml)
+![Platform](https://img.shields.io/badge/platform-iPhone%20%7C%20iPad-111827)
+![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-F05138)
+
+**Kendi video kaynakların, kişisel kütüphanen ve uygulama içi web tarayıcın.**
+
+AutoPulse TV; doğrudan video bağlantılarını ve M3U listelerini kaydetmek, aramak ve oynatmak için geliştirilen yerel bir iOS uygulamasıdır. AirPlay hedef seçimi ve ayrı bir resmi CarPlay video entegrasyonu içerir.
+
+[English](README.en.md) · [Codemagic kurulumu](docs/CODEMAGIC.md) · [Mimari](docs/ARCHITECTURE.md) · [Değişiklikler](CHANGELOG.md)
+
+## Uygulamadan
+
+<img src="docs/images/library-iphone.png" alt="AutoPulse TV kütüphane ekranı" width="320">
+
+Gerçek iPhone simülatöründen alınmıştır. Görünen kaynak UI test verisidir; çalışan bir yayın kataloğu veya CarPlay ekran görüntüsü değildir.
 
 ## Özellikler
 
-- Koyu tema, arama, favoriler, yatay/dikey SwiftUI yerleşimi.
-- HTTPS doğrudan medya kaynakları, AVPlayer oynatımı, tam ekran görünümü ve AirPlay hedef seçimi.
-- Kaydedilen izleme konumundan devam etme.
-- HTTPS üzerinden veya yerel dosyadan M3U içe aktarma; grup bilgisi ve yinelenen kaynak kontrolü.
-- HLS manifestlerini kanal listesiyle karıştırmayan ayrıştırıcı.
-- JSON kütüphane dışa aktarma ve geri yükleme.
-- Atomik yerel kayıt; bozuk dosyayı sessizce ezmeme.
-- iPhone/iPad üzerinde WebKit tarayıcı, ileri/geri, yenileme, adres alanı ve YouTube kısayolu.
-- Ayrı CarPlay konfigürasyonunda yerel CPListTemplate kataloğu ve resmi video oynatma tercihi.
-- 1024px opak ikon, gizlilik manifesti, XCTest ve UI testleri, Codemagic ve GitHub Actions yapılandırması.
+| Alan | Mevcut kapsam |
+| --- | --- |
+| Kütüphane | Kaynak ekleme/silme, arama, favoriler, grup bilgisi |
+| Medya oynatımı | HTTPS doğrudan HLS/MP4/MOV kaynakları, yerel oynatıcı ve tam ekran |
+| Devam etme | Uygun VOD kaynaklarında konumu kaydetme; canlı/bitmiş video için ayrı kurallar |
+| Listeler | Uzak veya yerel M3U, göreli adres çözümü, tekrarlı kaynakları ayıklama |
+| Yedekleme | JSON dışa aktarma, doğrulanmış geri yükleme ve atomik yerel kayıt |
+| Tarayıcı | iPhone/iPad WebKit, adres çubuğu, ileri/geri, yenile/durdur, Safari alternatifi |
+| Harici oynatma | Sistem AirPlay hedef seçicisi; alıcı ve kaynak desteğine bağlı |
+| CarPlay | Ayrı build seçeneği, yerel katalog şablonları ve video entitlement yapılandırması |
 
-## Derleme
+Uygulama hazır TV kanalı, film veya ücretli yayın erişimi sağlamaz. İçerikleri kullanıcı ekler.
 
-Mac üzerinde Xcode ve XcodeGen ile:
+## Doğrulanan durum
+
+**6 Kasım 2026:** [GitHub Actions çalışması](https://github.com/statelyx/AutoPulse-Tv/actions/runs/42200973648), `2d9be98` commit'inde varsayılan iPhone simülatör derlemesini başarıyla tamamladı. **6 birim testi + 1 UI testi, 0 hata.** Kullanılan ortam Xcode 26.6, iOS 26.5 ve iPhone 17 Pro simülatörüydü.
+
+| Aşama | Durum |
+| --- | --- |
+| Varsayılan iOS simülatör derlemesi | Başarılı |
+| Kütüphane/ayrıştırıcı testleri ve temel UI akışı | Başarılı |
+| Gerçek cihazda web video / AirPlay / medya senkronizasyonu | Henüz doğrulanmadı |
+| Ayrı CarPlay build'i ve gerçek araç | Henüz doğrulanmadı |
+| Codemagic uygulama bağlantısı / derlemesi | Bekliyor |
+| İmzalı IPA / TestFlight / App Store | Henüz yayınlanmadı |
+
+[CI kanıtı](docs/verification/2026-11-06-ci.json) · [Cihaz test matrisi](docs/TEST-MATRIX.md)
+
+`VALIDATION.json` yalnız yerel statik kontrolü kaydeder; GitHub'daki Apple SDK derleme/test kanıtı `docs/verification` altında ayrı tutulur.
+
+## Mac üzerinde çalıştırma
+
+Gerekenler: **Xcode, XcodeGen ve iOS 17+**.
 
 ```sh
+git clone https://github.com/statelyx/AutoPulse-Tv.git
+cd AutoPulse-Tv
 xcodegen generate
 open AutoPulseTV.xcodeproj
 ```
 
-Xcode'da Team ve kullanılabilir bundle ID seç. Scheme: AutoPulseTV. Testleri Xcode Product > Test ile veya `bash scripts/simulator.sh` komutuyla çalıştır.
+Xcode'da **AutoPulseTV** scheme'ini seç. Fiziksel cihaza yükleme için kendi Team ve geçerli bundle ID ayarlarını kullan. Varsayılan uygulama kimliği `com.statelyxx.autopulsetv` değeridir; GitHub kullanıcı adından bağımsızdır ve Apple hesabında kaydedilmesi gerekir.
 
-CarPlay yetkisi alındıktan sonraki ayrı derleme:
+Test, build logları ve gerçek simülatör ekran görüntüsü:
+
+```sh
+bash scripts/simulator.sh
+```
+
+Çıktılar `build/` altında oluşur. GitHub Actions aynı betiği çalıştırır ve `autopulsetv-verification` artifact'ini yayımlar.
+
+## Codemagic
+
+Depo kökünde [codemagic.yaml](codemagic.yaml) hazırdır:
+
+- **simulator:** imzasız derleme, birim/UI testleri ve ekran görüntüsü. Apple API anahtarı gerekmez.
+- **testflight:** dağıtım imzalama ve App Store Connect yüklemesi. Hesaba ait entegrasyon, sertifika, provisioning profile ve uygulama kaydı gerekir.
+
+İlk iş olarak **simulator** seçilmeli. [Adım adım Codemagic rehberi](docs/CODEMAGIC.md)
+
+## CarPlay sürümü
 
 ```sh
 xcodegen generate --spec project-carplay.yml
 ```
 
-Bu spec iOS 27 ve Apple'ın CarPlay video entitlement yetkisini gerektirir. Sadece entitlement dosyası eklemek yetki sağlamaz. CarPlay video oynatımı henüz doğrulanmadı. Varsayılan iPhone derlemesi CarPlay ana ekranında görünmez.
+Bu yapılandırma iOS 27+ SDK, Apple'ın uygun CarPlay video yetkisi ve desteklenen araç gerektirir. Normal iPhone build'inin yeşil CI sonucu CarPlay sürümünün çalıştığını kanıtlamaz. Araç ekranını sistem şablonları düzenler; telefon ekranı yansıtılmaz. Tarayıcı iPhone/iPad üzerindedir. Video uygunluğu sistem ve araç tarafından kontrol edilir.
 
-## Teknik sınırlar
+[CarPlay entegrasyonu ve sınırları](docs/CARPLAY.md)
 
-Ekran yansıtma, ReplayKit, sistemden video gizleme veya hareket kısıtlamasını aşma kodu yoktur. CarPlay ekranındaki yerleşimi sistem şablonları yönetir. Genel web tarayıcısı yalnız telefondadır. Tüm araçlarda video, sıfır gecikme, YouTube harici oynatma veya DRM uyumluluğu vaat edilmez. Gerçek ekran görüntüleri CI/Simulator çalıştırılınca üretilecektir.
+## Proje yapısı
 
-Tam ekran sunum, görüntü oranı, A/V senkronizasyonu ve araç ekranının yönüne uyum gerçek donanımda ölçülmelidir. Kaynaklar kullanıcı tarafından sağlanır; uygulama kanal veya film kataloğu içermez.
-
-## Dosyalar
-
-- docs/CODEMAGIC.md: sonraki Codemagic adımları.
-- docs/CARPLAY.md: resmi CarPlay entegrasyonu ve doğrulama kapsamı.
-- Tests / UITests: ayrıştırma, kayıt koruma, devam konumu ve kullanıcı akışı testleri.
-- VALIDATION.json: bu ortamda yapılan kontrolün sonucu.
-- store/: mağaza metinleri ve henüz yayınlanmamış gizlilik taslağı.
-- ARASTIRMA.md: APTV araştırması ve kaynaklar.
-- docs/APTV-FINDINGS.md: mağazadan kaldırılma, sürüm kırılmaları ve mühendislik kararları.
-- docs/NAME.md: isim ve teknik kimlikler.
-
-Yerel statik kontrol (Xcode derlemesi değildir):
-
-```sh
-python -m pip install -r scripts/requirements-dev.txt
-python scripts/validate.py
+```text
+Sources/              SwiftUI, kütüphane, oynatıcı ve WebKit
+CarPlay/              İsteğe bağlı araç sahnesi ve entitlement
+Resources/            İkon ve gizlilik manifesti
+Tests/ · UITests/     Model ve kullanıcı akışı testleri
+scripts/              Simülatör ve statik doğrulama araçları
+docs/                 Mimari, CI kanıtları ve kurulum rehberleri
+store/                Henüz yayımlanmamış mağaza/gizlilik taslakları
+project*.yml          XcodeGen proje tanımları
+codemagic.yaml        Simülatör ve TestFlight iş akışları
 ```
 
-## Henüz tamamlanmayan yayın işleri
+## Geliştirme ve geri bildirim
 
-GitHub deposu: https://github.com/statelyx/AutoPulse-Tv — kaynak kodu main dalına push edildi. Xcode derlemesi, XCTest çalıştırma, CarPlay cihaz testi, imzalama, TestFlight ve App Store yayını henüz doğrulanmadı. Destek/gizlilik sayfaları ve inceleme iletişim bilgileri de hesap erişimiyle tamamlanmalı. Mevcut mağaza metinleri varsayılan iPhone derlemesini tanımlar; CarPlay sürümüne geçince güncellenmeli.
+[Katkı rehberi](CONTRIBUTING.md) · [Hata bildir](https://github.com/statelyx/AutoPulse-Tv/issues/new/choose) · [APTV araştırma bulguları](docs/APTV-FINDINGS.md)
+
+Web sitelerinin oturum, DRM ve harici oynatma desteği hizmete bağlıdır. Gerçek araç uyumluluğu, sıfır gecikme veya tüm video sitelerinin çalışması vaat edilmez. Ödeme sistemi ve StoreKit ürünleri henüz uygulanmadı.

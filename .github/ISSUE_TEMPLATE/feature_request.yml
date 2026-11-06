@@ -1,0 +1,18 @@
+name: Feature request
+description: Propose an application improvement
+title: "[Feature]: "
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: User need
+      description: Describe the task that is difficult today.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Explain the expected experience and any relevant device constraints.
+    validations:
+      required: true

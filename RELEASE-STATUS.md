@@ -15,7 +15,13 @@ Kullanıcının mevcut Git Credential Manager oturumu üzerinden GitHub hesabı 
 
 ## Doğrulama
 
-Dokuz Swift dosyasının sözdizimi ve YAML/plist/JSON kontrolleri geçti. Apple SDK derlemesi, XCTest sonuçları, gerçek iPhone/araç testleri, imzalı IPA, TestFlight ve App Store yayını henüz doğrulanmadı. VALIDATION.json bu ayrımı kaydeder.
+Dokuz Swift dosyasının yerel sözdizimi ve YAML/plist/JSON kontrolleri geçti. GitHub Actions run 42200973648 içinde varsayılan iOS simülatör build'i, 6 birim testi ve 1 UI testi başarıyla tamamlandı. Kaynak commit: 2d9be98. Gerçek ekran görüntüsü docs/images/library-iphone.png, yapılandırılmış kanıt docs/verification/2026-11-06-ci.json içindedir.
+
+Gerçek iPhone/araç testleri, ayrı CarPlay build'i, imzalı IPA, TestFlight ve App Store yayını henüz doğrulanmadı. VALIDATION.json yerel statik kontrolle sınırlıdır.
+
+## Codemagic
+
+YAML ve kurulum rehberi GitHub'da hazır. Codemagic hesabında depo bağlantısı ve ilk build başlatılamadı; mevcut sekmeye erişim kayıtlı izin/yönetilen politika kapısında reddedildi. Bu projeye ait Codemagic app_id veya build ID yoktur.
 
 ## Sonraki adım
 
