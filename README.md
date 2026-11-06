@@ -1,4 +1,4 @@
-# ParkPlay
+# Molaqo
 
 Yerel iPhone/iPad video kütüphanesi ve isteğe bağlı resmi CarPlay video entegrasyonu. Kaynak kodu teslimidir; Apple SDK ile derlendiği veya gerçek araçta çalıştığı henüz doğrulanmadı.
 
@@ -11,7 +11,7 @@ Yerel iPhone/iPad video kütüphanesi ve isteğe bağlı resmi CarPlay video ent
 - HLS manifestlerini kanal listesiyle karıştırmayan ayrıştırıcı.
 - JSON kütüphane dışa aktarma ve geri yükleme.
 - Atomik yerel kayıt; bozuk dosyayı sessizce ezmeme.
-- iPhone/iPad üzerinde Safari görünümünde HTTPS tarayıcı ve YouTube kısayolu.
+- iPhone/iPad üzerinde WebKit tarayıcı, ileri/geri, yenileme, adres alanı ve YouTube kısayolu.
 - Ayrı CarPlay konfigürasyonunda yerel CPListTemplate kataloğu ve resmi video oynatma tercihi.
 - 1024px opak ikon, gizlilik manifesti, XCTest ve UI testleri, Codemagic ve GitHub Actions yapılandırması.
 
@@ -21,10 +21,10 @@ Mac üzerinde Xcode ve XcodeGen ile:
 
 ```sh
 xcodegen generate
-open ParkPlay.xcodeproj
+open Molaqo.xcodeproj
 ```
 
-Xcode'da Team ve kullanılabilir bundle ID seç. Scheme: ParkPlay. Testleri Xcode Product > Test ile veya `bash scripts/simulator.sh` komutuyla çalıştır.
+Xcode'da Team ve kullanılabilir bundle ID seç. Scheme: Molaqo. Testleri Xcode Product > Test ile veya `bash scripts/simulator.sh` komutuyla çalıştır.
 
 CarPlay yetkisi alındıktan sonraki ayrı derleme:
 
@@ -48,6 +48,15 @@ Tam ekran sunum, görüntü oranı, A/V senkronizasyonu ve araç ekranının yö
 - VALIDATION.json: bu ortamda yapılan kontrolün sonucu.
 - store/: mağaza metinleri ve henüz yayınlanmamış gizlilik taslağı.
 - ARASTIRMA.md: APTV araştırması ve kaynaklar.
+- docs/APTV-FINDINGS.md: mağazadan kaldırılma, sürüm kırılmaları ve mühendislik kararları.
+- docs/NAME.md: isim ve teknik kimlikler.
+
+Yerel statik kontrol (Xcode derlemesi değildir):
+
+```sh
+python -m pip install -r scripts/requirements-dev.txt
+python scripts/validate.py
+```
 
 ## Henüz tamamlanmayan yayın işleri
 

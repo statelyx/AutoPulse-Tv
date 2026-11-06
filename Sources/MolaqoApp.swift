@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct ParkPlayApp: App {
+struct MolaqoApp: App {
     @StateObject private var library = AppServices.library
     @StateObject private var playback = AppServices.playback
     var body: some Scene {

@@ -1,6 +1,6 @@
 workflows:
   simulator:
-    name: ParkPlay simulator validation
+    name: Molaqo simulator validation
     instance_type: mac_mini_m2
     max_build_duration: 30
     environment:
@@ -18,20 +18,20 @@ workflows:
       - build/simulator-build.log
       - build/simulator-test.log
       - build/TestResults.xcresult
-      - build/DerivedData/Build/Products/Debug-iphonesimulator/ParkPlay.app
+      - build/DerivedData/Build/Products/Debug-iphonesimulator/Molaqo.app
   testflight:
-    name: ParkPlay signed TestFlight build
+    name: Molaqo signed TestFlight build
     instance_type: mac_mini_m2
     max_build_duration: 45
     integrations:
-      app_store_connect: ParkPlay App Store Connect
+      app_store_connect: Molaqo App Store Connect
     environment:
       xcode: latest
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.statelyx.parkplay
+        bundle_identifier: com.statelyxx.molaqo
       vars:
-        BUNDLE_ID: com.statelyx.parkplay
+        BUNDLE_ID: com.statelyxx.molaqo
         # Use project-carplay.yml only after entitlement and compatible-car tests.
         PROJECT_SPEC: project.yml
     scripts:
@@ -45,7 +45,7 @@ workflows:
       - name: Archive and export
         script: |
           set -euo pipefail
-          xcode-project build-ipa --project ParkPlay.xcodeproj --scheme ParkPlay \
+          xcode-project build-ipa --project Molaqo.xcodeproj --scheme Molaqo \
             --archive-xcargs "CURRENT_PROJECT_VERSION=${BUILD_NUMBER}"
     artifacts:
       - build/ios/ipa/*.ipa

@@ -1,6 +1,6 @@
 # Türkçe mağaza metinleri — yüklenmedi
 
-Ad: ParkPlay: Video Kütüphanesi
+Ad: Molaqo: Video Kütüphanesi
 
 Alt başlık: Kendi videoların, tek yerde
 
@@ -8,15 +8,15 @@ Tanıtım metni: Video bağlantılarını kaydet, kişisel kütüphaneni düzenl
 
 Açıklama:
 
-ParkPlay, kendi video kaynaklarını bir arada tutman için tasarlanmış kişisel bir medya oynatıcısıdır.
+Molaqo, kendi video kaynaklarını bir arada tutman için tasarlanmış kişisel bir medya oynatıcısıdır.
 
 • HTTPS HLS, MP4 ve MOV bağlantılarını kütüphanene ekle.
 • Kaydettiğin kaynaklara tekrar kolayca ulaş.
 • Sistem oynatıcısıyla videolarını izle.
 • AirPlay hedef seçicisiyle desteklenen alıcılara bağlan.
-• YouTube'u iPhone içindeki tarayıcı görünümünde aç.
+• YouTube ve diğer HTTPS sitelerini uygulama içindeki WebKit tarayıcıda aç.
 
-ParkPlay hazır TV kanalları, film kataloğu veya ücretli içerik erişimi sağlamaz. Kendi içeriklerini veya kullanım hakkına sahip olduğun kaynakları ekle. Oynatma; kaynağın biçimine, ağ bağlantısına ve erişim koşullarına bağlıdır.
+Molaqo hazır TV kanalları, film kataloğu veya ücretli içerik erişimi sağlamaz. Kendi içeriklerini veya kullanım hakkına sahip olduğun kaynakları ekle. Oynatma; kaynağın biçimine, ağ bağlantısına ve erişim koşullarına bağlıdır.
 
 Araç ekranında video kullanımı uyumlu araç, işletim sistemi ve alıcı desteği gerektirir. Bu sürüm CarPlay ekranında uygulama veya tarayıcı arayüzü sunmaz. YouTube videolarının araç ekranında oynatılması vaat edilmez. Araç ekranında video yalnızca park halinde kullanılmalıdır.
 

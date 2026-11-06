@@ -82,7 +82,7 @@ struct LibraryScreen: View {
                 }.listRowBackground(Theme.panel)
             }
             .scrollContentBackground(.hidden).background(Theme.background)
-            .navigationTitle("ParkPlay")
+            .navigationTitle("Molaqo")
             .searchable(text: $query, prompt: "Kaynak veya grup ara")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -98,7 +98,7 @@ struct LibraryScreen: View {
             }
             .sheet(isPresented: $add) { AddSourceScreen() }
             .sheet(item: $selected) { PlayerScreen(source: $0) }
-            .fileExporter(isPresented: $exporting, document: backup, contentType: .json, defaultFilename: "ParkPlay-kutuphanem") { result in
+            .fileExporter(isPresented: $exporting, document: backup, contentType: .json, defaultFilename: "Molaqo-kutuphanem") { result in
                 if case .failure(let error) = result { library.message = error.localizedDescription }
             }
             .alert("Kütüphane", isPresented: Binding(get: { library.message != nil }, set: { if !$0 { library.message = nil } })) {
@@ -176,7 +176,7 @@ struct WebScreen: View {
             Form {
                 Section {
                     Label("Web, telefonunda.", systemImage: "globe").font(.title.bold())
-                    Text("Video sitelerini iPhone'daki güvenli Safari görünümünde aç.").foregroundStyle(.secondary)
+                    Text("Video sitelerini uygulamanın WebKit tarayıcısında aç.").foregroundStyle(.secondary)
                 }
                 Section("Adres") {
                     TextField("HTTPS web adresi", text: $address).urlInput()
@@ -189,7 +189,7 @@ struct WebScreen: View {
                         .font(.footnote).foregroundStyle(.secondary)
                 }
             }.navigationTitle("Web")
-            .sheet(item: $site) { SafariScreen(url: $0.url).ignoresSafeArea() }
+            .fullScreenCover(item: $site) { BrowserScreen(url: $0.url) }
         }
     }
     private func open(_ text: String) {
@@ -209,7 +209,7 @@ struct InformationScreen: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("ParkPlay 1.0") {
+                Section("Molaqo 1.0") {
                     Label("Molan için tasarlandı", systemImage: "parkingsign.circle").font(.headline)
                     Text("Kendi video kaynaklarını kaydet, listelerini düzenle ve desteklenen alıcılarda AirPlay kullan.")
                 }
@@ -228,7 +228,7 @@ struct InformationScreen: View {
                     Text("Dışa aktardığın JSON dosyası özel video bağlantıları içerebilir. Yalnız güvendiğin kişilerle paylaş.")
                 }
                 Section("İçerik") {
-                    Text("ParkPlay içerik veya TV kanalı sağlamaz. Yalnız kendi veya kullanım hakkına sahip olduğun kaynakları kullan. DRM korumalı ya da özel oturum isteyen her kaynak desteklenmeyebilir.")
+                    Text("Molaqo içerik veya TV kanalı sağlamaz. Yalnız kendi veya kullanım hakkına sahip olduğun kaynakları kullan. DRM korumalı ya da özel oturum isteyen her kaynak desteklenmeyebilir.")
                 }
             }.navigationTitle("Bilgi")
         }

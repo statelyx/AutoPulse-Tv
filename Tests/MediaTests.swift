@@ -1,7 +1,15 @@
 import XCTest
-@testable import ParkPlay
+@testable import Molaqo
 
 final class MediaTests: XCTestCase {
+    func testLiveAndCompletedPlaybackNeverSeekToOldPosition() {
+        XCTAssertNil(PlaybackPositionPolicy.resumeTarget(saved: 100, duration: .infinity))
+        XCTAssertNil(PlaybackPositionPolicy.resumeTarget(saved: .nan, duration: 60))
+        XCTAssertEqual(PlaybackPositionPolicy.resumeTarget(saved: 100, duration: 60), 59)
+        XCTAssertEqual(PlaybackPositionPolicy.savedPosition(current: 59, duration: 60), 0)
+        XCTAssertEqual(PlaybackPositionPolicy.savedPosition(current: 20, duration: 60), 20)
+        XCTAssertEqual(PlaybackPositionPolicy.savedPosition(current: 20, duration: .nan), 0)
+    }
     func testQuotedCommaRelativeURLAndDeduplication() throws {
         let sources = try M3UParser.parse("""
         #EXTM3U

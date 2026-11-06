@@ -11,7 +11,7 @@ final class LibraryStore: ObservableObject {
 
     init(fileURL: URL? = nil) {
         self.fileURL = fileURL ?? URL.applicationSupportDirectory
-            .appendingPathComponent("ParkPlay", isDirectory: true).appendingPathComponent("library.json")
+            .appendingPathComponent("Molaqo", isDirectory: true).appendingPathComponent("library.json")
         load()
     }
     private func load() {

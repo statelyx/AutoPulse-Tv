@@ -84,3 +84,14 @@ struct LibraryBackup: Codable {
     var version: Int = 1
     var sources: [MediaSource]
 }
+
+enum PlaybackPositionPolicy {
+    static func resumeTarget(saved: Double, duration: Double) -> Double? {
+        guard saved.isFinite, saved > 0, duration.isFinite, duration > 1 else { return nil }
+        return min(saved, duration - 1)
+    }
+    static func savedPosition(current: Double, duration: Double) -> Double {
+        guard current.isFinite, duration.isFinite, duration > 0, current < duration - 2 else { return 0 }
+        return max(current, 0)
+    }
+}

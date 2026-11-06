@@ -9,9 +9,12 @@ final class PlaybackController: ObservableObject {
     @Published private(set) var failure: String?
     @Published private(set) var loading = false
     private var statusObserver: NSKeyValueObservation?
+    private var waitingObserver: NSKeyValueObservation?
+    private var pendingResume: Double = 0
     func open(_ source: MediaSource) {
         stop()
         self.source = source
+        pendingResume = source.resumeTime
         failure = nil
         loading = true
         do {
@@ -21,26 +24,41 @@ final class PlaybackController: ObservableObject {
         let item = AVPlayerItem(url: source.url)
         player.allowsExternalPlayback = true
         player.usesExternalPlaybackWhileExternalScreenIsActive = true
+        player.automaticallyWaitsToMinimizeStalling = true
         player.replaceCurrentItem(with: item)
         statusObserver = item.observe(\.status, options: [.initial, .new]) { [weak self] item, _ in
             let status = item.status
             Task { @MainActor [weak self] in
                 guard let self, self.player.currentItem === item else { return }
                 self.loading = status == .unknown
+                if status == .readyToPlay, self.pendingResume > 0 {
+                    let duration = item.duration.seconds
+                    // Live/indefinite streams should start at the live edge, not an old timestamp.
+                    if let position = PlaybackPositionPolicy.resumeTarget(saved: self.pendingResume, duration: duration) {
+                        self.player.seek(to: CMTime(seconds: position, preferredTimescale: 600))
+                    }
+                    self.pendingResume = 0
+                }
                 if status == .failed {
                     self.failure = "Video açılamadı. Adres, ağ bağlantısı, erişim izni veya medya biçimini kontrol et."
                 }
             }
         }
-        if source.resumeTime > 0 { player.seek(to: CMTime(seconds: source.resumeTime, preferredTimescale: 600)) }
+        waitingObserver = player.observe(\.timeControlStatus, options: [.new]) { [weak self] _, _ in
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                self.loading = self.player.currentItem?.status == .unknown || self.player.timeControlStatus == .waitingToPlayAtSpecifiedRate
+            }
+        }
         player.play()
     }
     var position: Double {
         let value = player.currentTime().seconds
-        return value.isFinite ? max(value, 0) : 0
+        return PlaybackPositionPolicy.savedPosition(current: value, duration: player.currentItem?.duration.seconds ?? .nan)
     }
     func stop() {
         statusObserver = nil
+        waitingObserver = nil
         player.pause()
         player.replaceCurrentItem(with: nil)
         source = nil

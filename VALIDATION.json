@@ -1,7 +1,8 @@
 {
-  "swift_files_syntax_checked": 8,
+  "swift_files_syntax_checked": 9,
   "syntax_errors": [],
   "yaml_plist_json_parsed": true,
+  "legacy_brand_references": [],
   "apple_sdk_build_run": false,
   "xctest_run": false,
   "vehicle_test_run": false

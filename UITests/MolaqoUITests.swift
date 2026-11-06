@@ -1,6 +1,6 @@
 import XCTest
 
-final class ParkPlayUITests: XCTestCase {
+final class MolaqoUITests: XCTestCase {
     @MainActor
     func testCreateSourceAndCaptureScreens() {
         let app = XCUIApplication()

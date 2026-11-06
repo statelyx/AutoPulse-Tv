@@ -2,23 +2,23 @@
 include:
   - project.yml
 targets:
-  ParkPlay:
+  Molaqo:
     deploymentTarget: '27.0'
     sources:
       - CarPlay/CarPlaySceneDelegate.swift
     entitlements:
-      path: CarPlay/ParkPlay.entitlements
+      path: CarPlay/Molaqo.entitlements
     info:
       path: build/CarPlay-Info.plist
       properties:
-        CFBundleDisplayName: ParkPlay
+        CFBundleDisplayName: Molaqo
         UILaunchScreen: {}
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: true
           UISceneConfigurations:
             CPTemplateApplicationSceneSessionRoleApplication:
               - UISceneClassName: CPTemplateApplicationScene
-                UISceneConfigurationName: ParkPlay CarPlay
+                UISceneConfigurationName: Molaqo CarPlay
                 UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).CarPlaySceneDelegate
     settings:
       base:

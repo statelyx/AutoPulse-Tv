@@ -1,4 +1,7 @@
 .DS_Store
+.local/
+.venv/
+__pycache__/
 build/
 *.xcodeproj/
 *.xcworkspace/
