@@ -36,11 +36,11 @@ final class AutoPulseTVUITests: XCTestCase {
         for page in ["library", "import", "discover", "photo"] {
             app.launchArguments = ["-store-page", page]
             app.launch()
-            XCTAssertTrue(app.otherElements["storeScreenshotReady"].waitForExistence(timeout: 90))
+            XCTAssertTrue(app.descendants(matching: .any)["storeScreenshotReady"].waitForExistence(timeout: 90))
             if page == "library" { XCTAssertTrue(app.buttons["media-Göl kenarında"].waitForExistence(timeout: 15)) }
             if page == "photo" {
                 XCTAssertTrue(app.buttons["photoAirPlay"].waitForExistence(timeout: 15))
-                XCTAssertTrue(app.otherElements["photoImageReady"].waitForExistence(timeout: 15))
+                XCTAssertTrue(app.descendants(matching: .any)["photoImageReady"].waitForExistence(timeout: 15))
             }
             capture("store-\(page)")
             app.terminate()

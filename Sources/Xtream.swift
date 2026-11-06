@@ -39,25 +39,25 @@ enum AccountVault {
     private static let service = "com.statelyxx.autopulsetv.xtream"
     static func read(_ id: String) -> XtreamAccount? {
         var item: CFTypeRef?
-        let status = SecItemCopyMatching([kSecClass: kSecClassGenericPassword, kSecAttrService: service,
-            kSecAttrAccount: id, kSecReturnData: true, kSecMatchLimit: kSecMatchLimitOne] as CFDictionary, &item)
+        let status = SecItemCopyMatching([kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service,
+            kSecAttrAccount as String: id, kSecReturnData as String: true, kSecMatchLimit as String: kSecMatchLimitOne] as CFDictionary, &item)
         guard status == errSecSuccess, let data = item as? Data else { return nil }
         return try? JSONDecoder().decode(XtreamAccount.self, from: data)
     }
     static func save(_ account: XtreamAccount) throws {
-        let query = [kSecClass: kSecClassGenericPassword, kSecAttrService: service, kSecAttrAccount: account.id] as [CFString: Any]
+        let query = [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service, kSecAttrAccount as String: account.id] as [String: Any]
         let data = try JSONEncoder().encode(account)
-        let status = SecItemUpdate(query as CFDictionary, [kSecValueData: data] as CFDictionary)
+        let status = SecItemUpdate(query as CFDictionary, [kSecValueData as String: data] as CFDictionary)
         if status == errSecItemNotFound {
             var insert = query
-            insert[kSecValueData] = data
-            insert[kSecAttrAccessible] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+            insert[kSecValueData as String] = data
+            insert[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
             guard SecItemAdd(insert as CFDictionary, nil) == errSecSuccess else { throw MediaError.badResponse }
         } else if status != errSecSuccess { throw MediaError.badResponse }
     }
     static func remove(_ id: String) throws {
-        let status = SecItemDelete([kSecClass: kSecClassGenericPassword, kSecAttrService: service,
-            kSecAttrAccount: id] as CFDictionary)
+        let status = SecItemDelete([kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service,
+            kSecAttrAccount as String: id] as CFDictionary)
         guard status == errSecSuccess || status == errSecItemNotFound else { throw MediaError.badResponse }
     }
 }

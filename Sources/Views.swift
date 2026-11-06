@@ -30,96 +30,6 @@ struct RootView: View {
     }
 }
 
-struct LibraryScreen: View {
-    @EnvironmentObject private var library: LibraryStore
-    @State private var query = ""
-    @State private var favoritesOnly = false
-    @State private var add = false
-    @State private var selected: MediaSource?
-    @State private var exporting = false
-    @State private var backup = BackupDocument()
-    private var filtered: [MediaSource] {
-        library.sources.filter {
-            (!favoritesOnly || $0.isFavorite) && (query.isEmpty || $0.title.localizedCaseInsensitiveContains(query)
-                || $0.group.localizedCaseInsensitiveContains(query))
-        }.sorted { ($0.lastPlayed ?? .distantPast) > ($1.lastPlayed ?? .distantPast) }
-    }
-    var body: some View {
-        NavigationStack {
-            List {
-                Section {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Label("PARK ET. ARKANA YASLAN.", systemImage: "sparkles")
-                            .font(.caption.bold()).foregroundStyle(Theme.accent)
-                        Text("Molanın oynatma listesi.").font(.largeTitle.bold())
-                        Text("Kendi videoların. Kendi kütüphanen.").foregroundStyle(.secondary)
-                        HStack {
-                            Label("\(library.sources.count) kaynak", systemImage: "square.stack")
-                            Spacer()
-                            Label("AirPlay", systemImage: "airplayvideo")
-                        }.font(.caption).padding(.top, 6)
-                    }.padding(.vertical, 12)
-                }.listRowBackground(Theme.panel)
-                Section {
-                    Toggle("Yalnız favoriler", isOn: $favoritesOnly)
-                    if filtered.isEmpty {
-                        ContentUnavailableView(query.isEmpty ? "Kütüphanen hazır" : "Sonuç bulunamadı",
-                            systemImage: "play.rectangle", description: Text("+ düğmesinden bir video veya M3U listesi ekle."))
-                    }
-                    ForEach(filtered) { source in
-                        Button { selected = source } label: {
-                            HStack(spacing: 14) {
-                                Image(systemName: "play.fill").foregroundStyle(Theme.accent)
-                                    .frame(width: 44, height: 44).background(Theme.panel, in: RoundedRectangle(cornerRadius: 12))
-                                VStack(alignment: .leading, spacing: 5) {
-                                    Text(source.title).font(.headline).foregroundStyle(.primary)
-                                    Text(source.group).font(.caption).foregroundStyle(.secondary)
-                                    if source.resumeTime > 5 {
-                                        Text("\(Int(min(source.resumeTime / 60, 525_600))) dk · kaldığın yerden").font(.caption2).foregroundStyle(Theme.accent)
-                                    }
-                                }
-                                Spacer()
-                                if source.isFavorite { Image(systemName: "star.fill").foregroundStyle(.yellow) }
-                            }.padding(.vertical, 6)
-                        }
-                        .swipeActions(edge: .trailing) { Button("Sil", role: .destructive) { library.remove(source) } }
-                        .swipeActions(edge: .leading) {
-                            Button(source.isFavorite ? "Favoriden çıkar" : "Favorile") { library.favorite(source) }.tint(.orange)
-                        }
-                        .contextMenu {
-                            Button(source.isFavorite ? "Favoriden çıkar" : "Favorile", systemImage: "star") { library.favorite(source) }
-                            Button("Sil", systemImage: "trash", role: .destructive) { library.remove(source) }
-                        }
-                    }
-                }.listRowBackground(Theme.panel)
-            }
-            .scrollContentBackground(.hidden).background(Theme.background)
-            .navigationTitle("AutoPulse TV")
-            .searchable(text: $query, prompt: "Kaynak veya grup ara")
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button { do { backup = BackupDocument(data: try library.exportData()); exporting = true }
-                        catch { library.message = error.localizedDescription }
-                    } label: { Image(systemName: "square.and.arrow.up") }
-                    .accessibilityLabel("Kütüphaneyi dışa aktar")
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button { add = true } label: { Image(systemName: "plus.circle.fill") }
-                        .accessibilityLabel("Kaynak ekle").accessibilityIdentifier("addSource")
-                }
-            }
-            .sheet(isPresented: $add) { AddSourceScreen() }
-            .sheet(item: $selected) { PlayerScreen(source: $0) }
-            .fileExporter(isPresented: $exporting, document: backup, contentType: .json, defaultFilename: "AutoPulseTV-kutuphanem") { result in
-                if case .failure(let error) = result { library.message = error.localizedDescription }
-            }
-            .alert("Kütüphane", isPresented: Binding(get: { library.message != nil }, set: { if !$0 { library.message = nil } })) {
-                Button("Tamam") { library.message = nil }
-            } message: { Text(library.message ?? "") }
-        }
-    }
-}
-
 struct AddSourceScreen: View {
     @EnvironmentObject private var library: LibraryStore
     @Environment(\.dismiss) private var dismiss
@@ -179,37 +89,6 @@ struct AddSourceScreen: View {
     }
 }
 
-struct WebScreen: View {
-    @State private var address = "https://www.youtube.com"
-    @State private var site: WebDestination?
-    @State private var error: String?
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section {
-                    Label("Web, telefonunda.", systemImage: "globe").font(.title.bold())
-                    Text("Video sitelerini uygulamanın WebKit tarayıcısında aç.").foregroundStyle(.secondary)
-                }
-                Section("Adres") {
-                    TextField("HTTPS web adresi", text: $address).urlInput()
-                    Button("Sayfayı aç", systemImage: "arrow.up.right") { open(address) }
-                    Button("YouTube", systemImage: "play.rectangle") { open("https://www.youtube.com") }
-                    if let error { Text(error).foregroundStyle(.orange) }
-                }
-                Section {
-                    Text("Bu bölüm araç ekranında tarayıcı açmaz. Web videolarının AirPlay ve harici ekran desteği ilgili hizmete bağlıdır.")
-                        .font(.footnote).foregroundStyle(.secondary)
-                }
-            }.navigationTitle("Web")
-            .fullScreenCover(item: $site) { BrowserScreen(url: $0.url) }
-        }
-    }
-    private func open(_ text: String) {
-        do { site = WebDestination(url: try SourceValidation.secureURL(text)); error = nil }
-        catch { self.error = error.localizedDescription }
-    }
-}
-
 struct WebDestination: Identifiable { let id = UUID(); let url: URL }
 struct SafariScreen: UIViewControllerRepresentable {
     let url: URL
@@ -221,7 +100,7 @@ struct InformationScreen: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("AutoPulse TV 1.0") {
+                Section("AutoPulse TV 1.1") {
                     Label("Molan için tasarlandı", systemImage: "parkingsign.circle").font(.headline)
                     Text("Kendi video kaynaklarını kaydet, listelerini düzenle ve desteklenen alıcılarda AirPlay kullan.")
                 }

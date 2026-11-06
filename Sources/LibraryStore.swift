@@ -58,6 +58,7 @@ final class LibraryStore: ObservableObject {
                 try? FileManager.default.removeItem(at: source.resolvedURL)
                 if source.photoMovieFileName != nil { try? FileManager.default.removeItem(at: source.playbackURL) }
             }
+            if let id = source.providerID, !sources.contains(where: { $0.providerID == id }) { try? AccountVault.remove(id) }
         }
         catch { message = error.localizedDescription }
     }
@@ -168,8 +169,14 @@ final class LibraryStore: ObservableObject {
         let sanitized = try M3UParser.parse(text).compactMap { account.sanitize($0) }
         guard !sanitized.isEmpty else { throw MediaError.emptyPlaylist }
         try Task.checkCancellation()
+        let previous = AccountVault.read(account.id)
         try AccountVault.save(account)
-        return try merge(sanitized)
+        do { return try merge(sanitized) }
+        catch {
+            if let previous { try? AccountVault.save(previous) }
+            else { try? AccountVault.remove(account.id) }
+            throw error
+        }
     }
     func removeXtreamAccounts() throws {
         let ids = Set(sources.compactMap(\.providerID))

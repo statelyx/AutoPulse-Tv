@@ -2,7 +2,7 @@
 
 Ad: AutoPulse TV: Video Oynatıcı
 
-Alt başlık: Kendi videoların, tek yerde
+Alt başlık: Video ve fotoğrafların bir arada
 
 Tanıtım metni: Video bağlantılarını kaydet, kişisel kütüphaneni düzenle ve desteklenen alıcılara AirPlay ile aktar.
 
@@ -11,10 +11,15 @@ Açıklama:
 AutoPulse TV, kendi video kaynaklarını bir arada tutman için tasarlanmış kişisel bir medya oynatıcısıdır.
 
 • HTTPS HLS, MP4 ve MOV bağlantılarını kütüphanene ekle.
-• Kaydettiğin kaynaklara tekrar kolayca ulaş.
+• Dosyalar ve Fotoğraflar seçicilerinden video ve fotoğraflarını çevrimdışı ekle.
+• Fotoğraflarını tam ekran aç, yakınlaştır ve slayt gösterisi başlat.
+• M3U listelerini ve HTTPS/HLS destekli Xtream hesabını içe aktar.
+• Gruplar ve Favoriler ile koleksiyonunu düzenle.
 • Sistem oynatıcısıyla videolarını izle.
 • AirPlay hedef seçicisiyle desteklenen alıcılara bağlan.
-• YouTube ve diğer HTTPS sitelerini uygulama içindeki WebKit tarayıcıda aç.
+• Keşfet sayfasından web araması yap, site kısayollarını oluştur.
+• Desteklenen videolarda Resim İçinde Resim kullan.
+• Fotoğrafını desteklenen AirPlay alıcısında sessiz sunum olarak göster.
 
 AutoPulse TV hazır TV kanalları, film kataloğu veya ücretli içerik erişimi sağlamaz. Kendi içeriklerini veya kullanım hakkına sahip olduğun kaynakları ekle. Oynatma; kaynağın biçimine, ağ bağlantısına ve erişim koşullarına bağlıdır.
 
