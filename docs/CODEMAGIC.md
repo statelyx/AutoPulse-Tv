@@ -26,10 +26,10 @@ Bu ayarlar doğrulanınca `testflight` işi imzalı IPA oluşturup Apple'a yükl
 
 ## CarPlay derlemesi
 
-Önce docs/CARPLAY.md dosyasını oku. Yetki alındıktan sonra `PROJECT_SPEC` değerini `project-carplay.yml` yap. İmzalama profili `com.apple.developer.carplay-video` içermeli. İlk CarPlay build'ini simülatör ve gerçek uyumlu araçla ayrıca doğrula. Varsayılan simulator işi CarPlay sahnesini derlemez; CarPlay doğrulaması için proje üretim adımını aynı spec ile değiştir.
+Önce docs/CARPLAY.md dosyasını oku. `carplay-compile` işi CarPlay projesini Xcode 27.1 ile imzasız derlemek için hazırlandı; henüz çalıştırılmadı. Bu iş alıcı bağlantısını test etmez ve TestFlight IPA üretmez. Yetki alındıktan sonra imzalı işte `PROJECT_SPEC` değerini `project-carplay.yml` yap ve uyumlu Xcode sürümünü seç. İmzalama profili `com.apple.developer.carplay-video` içermeli. Varsayılan simulator işi CarPlay sahnesini derlemez. Windows alıcı araştırması ve paket kontrolü: [test rehberi](WINDOWS-CARPLAY-TESTING.md).
 
 ## Bu teslimde yapılmamış işlemler
 
-GitHub hesabı mevcut Git Credential Manager oturumuyla statelyx olarak doğrulandı ve kaynak kodu main dalına push edildi. GitHub Actions'ın varsayılan simülatör build'i ve testleri doğrulandı. Codemagic üzerinde uygulama ekleme veya build başlatma henüz yapılamadı: 6 Kasım 2026 tarihinde mevcut Codemagic sekmesine erişim kayıtlı izin/yönetilen politika kapısında reddedildi. Bu uygulama için Codemagic app_id veya build ID elde edilmedi. TestFlight'a binary gönderilmedi.
+GitHub Actions'ın varsayılan simülatör build'i ve testleri doğrulandı. Kullanıcının paylaştığı Codemagic ekranında uygulama eklenmiş ve simulator işi seçilmiş durumda. Bildirilen uygulama kimliği `6aedac2730f39d49d7284dcf`; [ilk build](https://codemagic.io/app/6aedac2730f39d49d7284dcf/build/6aedac3f7bd3d716e2eb5412) sonucu burada doğrulanmadı. TestFlight'a binary gönderimi doğrulanmadı.
 
 Resmi referans: https://docs.codemagic.io/yaml-quick-start/building-a-native-ios-app/
