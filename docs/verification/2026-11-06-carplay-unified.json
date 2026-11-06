@@ -21,11 +21,15 @@
     "index": 7,
     "id": "6aede66d24e1ec237556d548",
     "url": "https://codemagic.io/app/6aedac2730f39d49d7284dcf/build/6aede66d24e1ec237556d548",
-    "last_observed_status": "waiting",
+    "last_observed_status": "failed",
     "superseded_builds_cancelled": [
       5,
       6
-    ]
+    ],
+    "duration_seconds": 134,
+    "failed_step": "Archive and export",
+    "exit_code": 65,
+    "xcode_error": "Entitlements com.apple.developer.carplay-audio and com.apple.developer.carplay-video not found and could not be included in profile."
   },
   "apple": {
     "audio_request": "submission confirmation observed",
@@ -34,6 +38,7 @@
     "profiles_regenerated_with_carplay": false,
     "new_testflight_upload_verified": false,
     "build_4_submitted": false,
-    "physical_carplay_tested": false
+    "physical_carplay_tested": false,
+    "latest_portal_audio_capability_status": "No Status; request link, not an enabled capability"
   }
 }

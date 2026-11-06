@@ -4,7 +4,7 @@
 
 Kaynak adc9a2a GitHub main dalına push edildi. Tek project.yml, audio/video entitlement, explicit scene, ses fallback ve iki yeni regresyon testi eklendi. XcodeGen üretiminde anahtarların kaybolmaması için entitlements.properties tanımlandı; disconnect callback imzası düzeltildi.
 
-d83a308 CI çalışması 12 birim + 2 UI testiyle başarılı tamamlandı; son callback düzeltmesinin adc9a2a CI sonucu henüz doğrulanmadı. Codemagic build 7 (6aede66d24e1ec237556d548) son kontrolde waiting. Build 5 ve 6 eski kaynakları yüklememeleri için iptal edildi.
+d83a308 CI çalışması 12 birim + 2 UI testiyle başarılı tamamlandı; son callback düzeltmesinin adc9a2a CI sonucu henüz doğrulanmadı. Codemagic build 7 (6aede66d24e1ec237556d548) 2 dakika 14 saniyede başarısız oldu: Archive and export, exit 65. Xcode, com.apple.developer.carplay-audio ve com.apple.developer.carplay-video yetkilerinin profile eklenemediğini raporladı. Apple portalında Audio hâlâ No Status / Request capability olarak görünüyor. Build 5 ve 6 eski kaynakları yüklememeleri için iptal edildi.
 
 Apple CarPlay Audio ve Video başvurularının gönderim onayı görüldü; yetki onayı henüz doğrulanmadı. CarPlay yetkili development/App Store profilleri yeniden üretilemedi. Yeni build TestFlight yüklemesi ve gerçek araç testi tamamlanmadı. Build 4 submit edilmedi. Ayrıntılar: docs/verification/2026-11-06-carplay-unified.json.
 
