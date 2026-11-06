@@ -1,23 +1,22 @@
 # Teslim durumu — 6 Kasım 2026
 
-## Son düzenleme
+## Kimlik ve yer
 
-Ürün adı AutoPulseTV olarak değiştirildi. Tek kaynak proje kullanıcının Masaüstü/AutoPulseTV klasörüne taşındı. Eski teslim ZIP'i ve geçici araçlar, silme işlemi otomatik denetimde engellendiği için proje içindeki Git dışında tutulan .local arşivine taşındı. Git geçmişi projenin .git klasöründe korundu.
+- Ürün adı: AutoPulse TV
+- Mağaza başlığı: AutoPulse TV: Video Oynatıcı
+- Yerel kaynak proje: Masaüstü/AutoPulseTV
+- Xcode proje / scheme: AutoPulseTV
+- GitHub: https://github.com/statelyx/AutoPulse-Tv
+- Dal: main; origin/main takip ediliyor.
 
-Telefon içi WebKit tarayıcı ve oynatıcı devam konumu düzeltmeleri eklendi. Güncel bulgular docs/APTV-FINDINGS.md, isim kararı docs/NAME.md, cihaz kabul testleri docs/TEST-MATRIX.md dosyalarında.
+## GitHub
 
-## Tamamlanan yerel çalışma
-
-SwiftUI uygulama kaynakları; M3U ayrıştırıcı; JSON içe/dışa aktarma; dosya korumalı kalıcı kayıt; favori, arama ve izleme konumu; AVPlayer ve AirPlay; telefon içi WebKit tarayıcı ve Safari alternatifi; isteğe bağlı CarPlay video sahnesi; ikon, manifest, birim/UI testleri, CI tanımları ve Codemagic rehberi.
+Kullanıcının mevcut Git Credential Manager oturumu üzerinden GitHub hesabı statelyx olarak doğrulandı. Önceden oluşturulmuş herkese açık AutoPulse-Tv deposu bulundu. Uzak deponun başlangıç README commit'i yerel geçmişle birleştirildi ve normal push başarılı oldu. Force push yapılmadı. Yerel .local arşivi Git dışında tutulur.
 
 ## Doğrulama
 
-VALIDATION.json dosyasında Swift sözdizimi, YAML, plist ve JSON kontrolleri kaydedildi. Apple SDK bulunmadığı için derleme, link, XCTest ve araç testi çalıştırılmadı. Çalışan CarPlay uygulaması veya mağazaya hazır binary olduğu iddia edilmiyor.
-
-## GitHub engeli
-
-Son kullanıcı isteği statelyxx hesabına push yönündedir. Önceki ekran görüntüsünde görünen hesap kullanıcı adı statelyx, görünen profil adı statelyxx idi. Doğru uzak hesap canlı olarak doğrulanamadı. GitHub sekmesine normal erişim yeniden denendi ve kayıtlı izin/yönetilen politika kapısında reddedildi. Bu engel başka yüzeyle aşılmadı; depo oluşturulmadı ve push yapılmadı.
+Dokuz Swift dosyasının sözdizimi ve YAML/plist/JSON kontrolleri geçti. Apple SDK derlemesi, XCTest sonuçları, gerçek iPhone/araç testleri, imzalı IPA, TestFlight ve App Store yayını henüz doğrulanmadı. VALIDATION.json bu ayrımı kaydeder.
 
 ## Sonraki adım
 
-Yerel depo içeriği Masaüstü/AutoPulseTV altındadır. GitHub erişimi açıldığında kullanıcı hesabını doğrula, autopulse-tv adlı özel depo oluştur ve main dalını push et. Sonra docs/CODEMAGIC.md içindeki simulator işiyle ilk gerçek derlemeyi yap. CarPlay yetkisi ve araç doğrulaması tamamlanınca project-carplay.yml kullanılabilir. Sıfır gecikme veya sistemden gizleme desteği yoktur.
+Codemagic'te bu depoyu bağlayıp önce simulator işini çalıştır. docs/CODEMAGIC.md içindeki adımları kullan. CarPlay video yetkisi ve gerçek araç doğrulaması sonrasında project-carplay.yml tercih edilebilir. Telefon WebKit tarayıcısı mevcuttur; resmi CarPlay video entegrasyonu ayrı ve henüz test edilmemiştir.

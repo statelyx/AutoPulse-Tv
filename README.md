@@ -60,4 +60,4 @@ python scripts/validate.py
 
 ## Henüz tamamlanmayan yayın işleri
 
-GitHub push, Xcode derlemesi, XCTest çalıştırma, CarPlay cihaz testi, imzalama, TestFlight ve App Store yayını yapılmadı. Destek/gizlilik sayfaları ve inceleme iletişim bilgileri de hesap erişimiyle tamamlanmalı. Mevcut mağaza metinleri varsayılan iPhone derlemesini tanımlar; CarPlay sürümüne geçince güncellenmeli.
+GitHub deposu: https://github.com/statelyx/AutoPulse-Tv — kaynak kodu main dalına push edildi. Xcode derlemesi, XCTest çalıştırma, CarPlay cihaz testi, imzalama, TestFlight ve App Store yayını henüz doğrulanmadı. Destek/gizlilik sayfaları ve inceleme iletişim bilgileri de hesap erişimiyle tamamlanmalı. Mevcut mağaza metinleri varsayılan iPhone derlemesini tanımlar; CarPlay sürümüne geçince güncellenmeli.

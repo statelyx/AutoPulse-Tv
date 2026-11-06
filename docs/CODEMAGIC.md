@@ -24,4 +24,4 @@ Bu ayarlar doğrulanınca `testflight` işi imzalı IPA oluşturup Apple'a yükl
 
 ## Bu teslimde yapılmamış işlemler
 
-GitHub hesabı tarayıcı erişim engeli nedeniyle doğrulanamadı. Depo oluşturulmadı ve push yapılmadı. Codemagic üzerinde bu işler çalıştırılmadı. TestFlight'a binary gönderilmedi. Windows'taki sözdizimi doğrulaması Apple SDK type-check, link veya runtime testi değildir.
+GitHub hesabı mevcut Git Credential Manager oturumuyla statelyx olarak doğrulandı. Proje https://github.com/statelyx/AutoPulse-Tv deposuna terminalden push edildi. Codemagic üzerinde bu işler çalıştırılmadı. TestFlight'a binary gönderilmedi. Windows'taki sözdizimi doğrulaması Apple SDK type-check, link veya runtime testi değildir.
