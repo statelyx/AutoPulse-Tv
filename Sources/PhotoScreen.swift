@@ -11,6 +11,7 @@ struct PhotoScreen: View {
     @State private var controls = true
     @State private var slideshow = false
     @State private var casting = false
+    @State private var loadFailed = false
     private var selected: MediaSource { current ?? source }
     private var photos: [MediaSource] { library.sources.filter { $0.mediaKind == .photo } }
     var body: some View {
@@ -18,7 +19,10 @@ struct PhotoScreen: View {
             Color.black.ignoresSafeArea()
             if let image {
                 ZoomPhoto(image: image).ignoresSafeArea()
+                    .accessibilityIdentifier("photoImageReady")
                     .onTapGesture { withAnimation { controls.toggle() } }
+            } else if loadFailed {
+                ContentUnavailableView("Fotoğraf bulunamadı", systemImage: "photo.badge.exclamationmark", description: Text("Dosyayı yeniden içe aktarabilirsin."))
             } else { ProgressView("Fotoğraf açılıyor…").tint(.mint) }
             if controls {
                 VStack {
@@ -51,8 +55,10 @@ struct PhotoScreen: View {
         }.foregroundStyle(.white).tint(.mint)
             .task(id: selected.id) {
                 image = nil
+                loadFailed = false
                 let url = selected.resolvedURL
                 image = await Task.detached(priority: .userInitiated) { MediaImporter.thumbnail(url, maximum: 3000) }.value
+                loadFailed = image == nil
             }
             .task(id: slideshow) {
                 guard slideshow else { return }

@@ -7,6 +7,7 @@ struct SettingsScreen: View {
     @State private var exporting = false
     @State private var restoring = false
     @State private var message: String?
+    @State private var removeAccounts = false
     var body: some View {
         NavigationStack {
             List {
@@ -29,6 +30,9 @@ struct SettingsScreen: View {
                     }
                     Button("M3U / JSON içe aktar", systemImage: "square.and.arrow.down") { restoring = true }
                     Text("JSON yedeği yalnız bağımsız internet kaynaklarını içerir. Yerel dosyalar ve Xtream hesapları yedeğe dahil edilmez.").font(.caption).foregroundStyle(.secondary)
+                    if library.sources.contains(where: { $0.providerID != nil }) {
+                        Button("Xtream hesaplarını ve kaynaklarını kaldır", role: .destructive) { removeAccounts = true }
+                    }
                 }.listRowBackground(Theme.panel)
                 Section("Büyük ekranda") {
                     Label("Video ve fotoğraf sunumu", systemImage: "airplayvideo")
@@ -50,6 +54,12 @@ struct SettingsScreen: View {
                 .alert("Kütüphane", isPresented: Binding(get: { message != nil }, set: { if !$0 { message = nil } })) {
                     Button("Tamam") { message = nil }
                 } message: { Text(message ?? "") }
+                .confirmationDialog("Xtream hesap bilgileri Anahtar Zinciri’nden ve bu hesapların kaynakları kütüphaneden kaldırılacak.", isPresented: $removeAccounts, titleVisibility: .visible) {
+                    Button("Hesapları kaldır", role: .destructive) {
+                        do { try library.removeXtreamAccounts() }
+                        catch { message = error.localizedDescription }
+                    }
+                }
         }
     }
 }

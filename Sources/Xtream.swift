@@ -55,6 +55,11 @@ enum AccountVault {
             guard SecItemAdd(insert as CFDictionary, nil) == errSecSuccess else { throw MediaError.badResponse }
         } else if status != errSecSuccess { throw MediaError.badResponse }
     }
+    static func remove(_ id: String) throws {
+        let status = SecItemDelete([kSecClass: kSecClassGenericPassword, kSecAttrService: service,
+            kSecAttrAccount: id] as CFDictionary)
+        guard status == errSecSuccess || status == errSecItemNotFound else { throw MediaError.badResponse }
+    }
 }
 
 struct XtreamScreen: View {

@@ -171,4 +171,11 @@ final class LibraryStore: ObservableObject {
         try AccountVault.save(account)
         return try merge(sanitized)
     }
+    func removeXtreamAccounts() throws {
+        let ids = Set(sources.compactMap(\.providerID))
+        // Delete the credential first: a storage failure leaves an entry that
+        // asks to reconnect, rather than an account with no removal control.
+        for id in ids { try AccountVault.remove(id) }
+        try commit(sources.filter { $0.providerID == nil })
+    }
 }
