@@ -77,4 +77,6 @@ workflows:
     publishing:
       app_store_connect:
         auth: integration
-        submit_to_testflight: true
+        # Upload normally; App Store Connect's existing internal group has
+        # automatic distribution enabled. External beta review is a separate step.
+        submit_to_testflight: false
