@@ -1,28 +1,16 @@
 # Teslim durumu — 6 Kasım 2026
 
-## Kimlik ve yer
+AutoPulse TV 1.1.0 (4), Codemagic üzerinden imzalanıp App Store Connect'e yüklendi. Mevcut AutoPulse Dahili Test grubunda Testing durumunda olduğu ve bir kurulum bulunduğu doğrulandı. Test notları kaydedildi. App Store genel yayın incelemesine gönderilmedi.
 
-- Ürün adı: AutoPulse TV
-- Mağaza başlığı: AutoPulse TV: Video Oynatıcı
-- Yerel kaynak proje: Masaüstü/AutoPulseTV
-- Xcode proje / scheme: AutoPulseTV
-- GitHub: https://github.com/statelyx/AutoPulse-Tv
-- Dal: main; origin/main takip ediliyor.
+## Uygulanan özellikler
 
-## GitHub
-
-Kullanıcının mevcut Git Credential Manager oturumu üzerinden GitHub hesabı statelyx olarak doğrulandı. Önceden oluşturulmuş herkese açık AutoPulse-Tv deposu bulundu. Uzak deponun başlangıç README commit'i yerel geçmişle birleştirildi ve normal push başarılı oldu. Force push yapılmadı. Yerel .local arşivi Git dışında tutulur.
+Dosyalar/Fotoğraflar içe aktarma, çevrimdışı yerel medya, video/fotoğraf filtreleri, favoriler/gruplar, kaynak düzenleme, tam ekran fotoğraf/yakınlaştırma/slayt gösterisi, AirPlay için sessiz fotoğraf video klibi, PiP, keşif kısayolları, M3U ve Keychain kimlik bilgileriyle Xtream uyumlu liste içe aktarma.
 
 ## Doğrulama
 
-Dokuz Swift dosyasının yerel sözdizimi ve YAML/plist/JSON kontrolleri geçti. GitHub Actions run 42200973648 içinde varsayılan iOS simülatör build'i, 6 birim testi ve 1 UI testi başarıyla tamamlandı. Kaynak commit: 2d9be98. Gerçek ekran görüntüsü docs/images/library-iphone.png, yapılandırılmış kanıt docs/verification/2026-11-06-ci.json içindedir.
+- GitHub Actions: https://github.com/statelyx/AutoPulse-Tv/actions/runs/42227322556 — kaynak 6af6fe8; 10 birim + 2 UI testi, 0 hata. iPhone ve iPad native ekran görüntüleri başarılı.
+- Codemagic build: https://codemagic.io/app/6aedac2730f39d49d7284dcf/build/6aedd645e348ff611c865c01 — başarılı, imzalı Release kaynağı e0f1396. Sonraki commitler DEBUG ekran görüntüsü düzeneğini iyileştirir.
+- TestFlight: 1.1.0 (4), AutoPulse Dahili Test, Testing.
+- Ekran görüntüleri: store/screenshots/v1.1; dört farklı sayfa, hem iPhone hem iPad. Boyutlar/hashler manifest.json içinde.
 
-Gerçek iPhone/araç testleri, ayrı CarPlay build'i, imzalı IPA, TestFlight ve App Store yayını henüz doğrulanmadı. VALIDATION.json yerel statik kontrolle sınırlıdır.
-
-## Codemagic
-
-YAML ve kurulum rehberi GitHub'da hazır. Codemagic hesabında depo bağlantısı ve ilk build başlatılamadı; mevcut sekmeye erişim kayıtlı izin/yönetilen politika kapısında reddedildi. Bu projeye ait Codemagic app_id veya build ID yoktur.
-
-## Sonraki adım
-
-Codemagic'te bu depoyu bağlayıp önce simulator işini çalıştır. docs/CODEMAGIC.md içindeki adımları kullan. CarPlay video yetkisi ve gerçek araç doğrulaması sonrasında project-carplay.yml tercih edilebilir. Telefon WebKit tarayıcısı mevcuttur; resmi CarPlay video entegrasyonu ayrı ve henüz test edilmemiştir.
+Gerçek araç/AirPlay oynatma testi yapılmadı. Varsayılan build native AirPlay kullanır. Ayrı CarPlay yapılandırması Apple video yetkisi, uygun SDK ve uyumlu araç gerektirir. Telefonun web arayüzünü araç ekranına yansıtmaz.

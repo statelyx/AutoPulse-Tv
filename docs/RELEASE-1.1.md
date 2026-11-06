@@ -10,7 +10,7 @@ CarPlay remains an opt-in entitlement build. The standard TestFlight build uses 
 
 Four distinct pages: library, source import, discovery and photo viewer. Debug-only StoreScreenshotFrame wraps the actual SwiftUI views in consistent Turkish explanatory copy. The simulator's native simctl capture takes each page after a debug-only layout/image readiness marker is written. This avoids accessibility snapshot timeouts during store capture. XCUITest separately verifies source creation/persistence and full-screen photo navigation. Original illustrative landscape photos and short still-frame videos are seeded only into an isolated screenshot library. No production library is modified, and no catalog is bundled into Release builds.
 
-Run `bash scripts/simulator.sh` on macOS. Native PNG captures are saved to `build/screenshots/iphone` and `build/screenshots/ipad`. Missing readiness markers fail the script with a diagnostic capture. The signed release remains subject to successful Apple SDK build/tests and TestFlight processing; actual phone/AirPlay/vehicle tests require the corresponding hardware.
+Run `bash scripts/simulator.sh` on macOS. Native PNG captures are saved to `build/screenshots/iphone` and `build/screenshots/ipad`. Missing readiness markers fail the script with a diagnostic capture. CI run 42227322556 passed ten unit and two UI tests and captured all eight PNGs. The delivered pack is store/AutoPulseTV-1.1-AppStore.zip. Signed Codemagic build 6aedd645e348ff611c865c01 uploaded 1.1.0 (4), now Testing in the existing internal TestFlight group. Actual AirPlay/vehicle playback requires hardware verification.
 
 ## References
 

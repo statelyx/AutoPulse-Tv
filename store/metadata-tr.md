@@ -2,7 +2,7 @@
 
 Ad: AutoPulse TV: Video Oynatıcı
 
-Alt başlık: Video ve fotoğrafların bir arada
+Alt başlık: Videoların ve fotoğrafların
 
 Tanıtım metni: Video bağlantılarını kaydet, kişisel kütüphaneni düzenle ve desteklenen alıcılara AirPlay ile aktar.
 
@@ -25,7 +25,7 @@ AutoPulse TV hazır TV kanalları, film kataloğu veya ücretli içerik erişimi
 
 Araç ekranında video kullanımı uyumlu araç, işletim sistemi ve alıcı desteği gerektirir. Bu sürüm CarPlay ekranında uygulama veya tarayıcı arayüzü sunmaz. YouTube videolarının araç ekranında oynatılması vaat edilmez. Araç ekranında video yalnızca park halinde kullanılmalıdır.
 
-Anahtar kelimeler: video,oynatıcı,kütüphane,hls,mp4,airplay,medya
+Anahtar kelimeler: video,fotoğraf,oynatıcı,m3u,xtream,airplay,kütüphane,web,slayt,çevrimdışı
 
 Kategori önerisi: Fotoğraf ve Video
 

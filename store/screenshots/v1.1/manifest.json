@@ -1,0 +1,71 @@
+{
+  "source_commit": "6af6fe8",
+  "ci_run": "https://github.com/statelyx/AutoPulse-Tv/actions/runs/42227322556",
+  "capture": "Native iOS Simulator PNG; real SwiftUI screens; isolated original illustrative demo media in DEBUG only.",
+  "files": [
+    {
+      "path": "ipad/01-library.png",
+      "size": [
+        2064,
+        2752
+      ],
+      "sha256": "deb5e3c708bff2e209ac73f3f66d7e421bf8c2d673a3e6eca7ffdf1754f124b8"
+    },
+    {
+      "path": "ipad/02-import.png",
+      "size": [
+        2064,
+        2752
+      ],
+      "sha256": "ea647beb90d07fbdca2e158663fb8984f712d72c7e020c9b693128b699933496"
+    },
+    {
+      "path": "ipad/03-discover.png",
+      "size": [
+        2064,
+        2752
+      ],
+      "sha256": "350224f140b1bb23f32d4c256e61aa1c8408acf7641070af24c261cadfefb7dd"
+    },
+    {
+      "path": "ipad/04-photo.png",
+      "size": [
+        2064,
+        2752
+      ],
+      "sha256": "45333cba112895735a57480f51bad67029a739b34c2befe884bea064607826f1"
+    },
+    {
+      "path": "iphone/01-library.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "sha256": "e2b1facf4ab248ab7b2f437f573ade096d762a6f017ec25c649701891502f96c"
+    },
+    {
+      "path": "iphone/02-import.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "sha256": "2e8f12c29f282eca3522abcdb2e4e201110ed586789fbe30d89dac40ae7bb463"
+    },
+    {
+      "path": "iphone/03-discover.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "sha256": "4ea185178d6e4a642fef91d1cc6ac96d6a4c8d9323a349d43165b3072bbeb1dd"
+    },
+    {
+      "path": "iphone/04-photo.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "sha256": "3e3ba9686253b43e903d123de9f939f9b1bdc60c8f3d652a655d39add2e0ca39"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "run_url": "https://github.com/statelyx/AutoPulse-Tv/actions/runs/42227322556",
+  "source_commit": "6af6fe8",
+  "conclusion": "success",
+  "unit_tests": 10,
+  "ui_tests": 2,
+  "failures": 0,
+  "screenshots": {
+    "iphone": [
+      1320,
+      2868
+    ],
+    "ipad": [
+      2064,
+      2752
+    ],
+    "pages": 4
+  },
+  "testflight": {
+    "version": "1.1.0",
+    "build": 4,
+    "status": "Testing",
+    "signed_source_commit": "e0f1396",
+    "vehicle_tested": false
+  }
+}

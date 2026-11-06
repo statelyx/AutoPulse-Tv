@@ -16,11 +16,13 @@ A native iPhone/iPad personal media library, embedded WebKit browser and optiona
 
 No channels or licensed streaming catalog are supplied.
 
-## Verified development status
+## Verified release status
 
-[Run 42200973648](https://github.com/statelyx/AutoPulse-Tv/actions/runs/42200973648) built the default app and passed six unit tests and one UI test at commit `2d9be98`, using Xcode 26.6 and an iPhone 17 Pro / iOS 26.5 simulator. [Evidence](docs/verification/2026-11-06-ci.json).
+Version 1.1.0 (4) is Testing in the existing internal TestFlight group after a successful signed Codemagic build and App Store Connect upload. No public App Store review was submitted.
 
-Real-device streaming, AirPlay quality, the optional CarPlay build and vehicle behavior remain unverified. Codemagic account connection, distribution signing, TestFlight and App Store release are pending.
+[Latest simulator CI](https://github.com/statelyx/AutoPulse-Tv/actions/runs/42227322556) passed 10 unit and 2 UI tests and captured four real app pages on both iPhone and iPad. [Screenshot pack](store/AutoPulseTV-1.1-AppStore.zip) · [Release details](docs/RELEASE-1.1.md).
+
+Files/Photos offline import, full-screen photo zoom/slideshow, still-image AirPlay presentation, PiP, discovery shortcuts and Xtream-compatible playlist import are included. Physical AirPlay/vehicle behavior and the optional CarPlay build remain unverified.
 
 ## Build
 

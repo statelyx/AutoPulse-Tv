@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.0 (4) — Internal TestFlight, 2026-11-06
+
+- Local Files/Photos import, offline video/photo grid, groups and favorites.
+- Full-screen photo zoom, slideshow, sharing and still-image AirPlay video presentation.
+- Native PiP, discovery shortcuts/custom bookmarks and Keychain-backed Xtream-compatible import.
+- Ten unit and two UI tests passed; four App Store pages captured for iPhone and iPad.
+- Signed Codemagic build uploaded successfully; internal TestFlight group status Testing. Physical AirPlay/CarPlay tests remain pending.
+
+
 ## 1.0.0 — Development
 
 ### Added

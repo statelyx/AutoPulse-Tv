@@ -33,20 +33,15 @@ Uygulama hazır TV kanalı, film veya ücretli yayın erişimi sağlamaz. İçer
 
 ## Doğrulanan durum
 
-**6 Kasım 2026:** [GitHub Actions çalışması](https://github.com/statelyx/AutoPulse-Tv/actions/runs/42200973648), `2d9be98` commit'inde varsayılan iPhone simülatör derlemesini başarıyla tamamladı. **6 birim testi + 1 UI testi, 0 hata.** Kullanılan ortam Xcode 26.6, iOS 26.5 ve iPhone 17 Pro simülatörüydü.
+**1.1.0 (4) TestFlight dahili testte hazır.** Codemagic imzalı build ve App Store Connect yüklemesi başarılı. [Son CI çalışmasında](https://github.com/statelyx/AutoPulse-Tv/actions/runs/42227322556) 10 birim ve 2 UI testi geçti; iPhone/iPad için dört ayrı sayfa yakalandı.
 
-| Aşama | Durum |
-| --- | --- |
-| Varsayılan iOS simülatör derlemesi | Başarılı |
-| Kütüphane/ayrıştırıcı testleri ve temel UI akışı | Başarılı |
-| Gerçek cihazda web video / AirPlay / medya senkronizasyonu | Henüz doğrulanmadı |
-| Ayrı CarPlay build'i ve gerçek araç | Henüz doğrulanmadı |
-| Codemagic uygulama bağlantısı / derlemesi | Bekliyor |
-| İmzalı IPA / TestFlight / App Store | Henüz yayınlanmadı |
+Dosyalar/Fotoğraflar içe aktarma, yerel video/fotoğraf, tam ekran zoom/slayt, PiP, keşif kısayolları ve Xtream uyumlu içe aktarma eklendi. [Sürüm ayrıntıları](docs/RELEASE-1.1.md) · [Güncel teslim durumu](RELEASE-STATUS.md)
 
-[CI kanıtı](docs/verification/2026-11-06-ci.json) · [Cihaz test matrisi](docs/TEST-MATRIX.md)
+[App Store görsel paketi](store/AutoPulseTV-1.1-AppStore.zip) · [Görseller ve kaynak manifesti](store/screenshots/v1.1/README.md)
 
-`VALIDATION.json` yalnız yerel statik kontrolü kaydeder; GitHub'daki Apple SDK derleme/test kanıtı `docs/verification` altında ayrı tutulur.
+![Dört farklı uygulama sayfası](store/screenshots/v1.1/preview.jpg)
+
+Fiziksel AirPlay/araç testi ve ayrı CarPlay build doğrulaması bekliyor. App Store genel yayınına gönderilmedi.
 
 ## Mac üzerinde çalıştırma
 
