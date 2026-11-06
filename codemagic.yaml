@@ -14,7 +14,7 @@ workflows:
       - name: Build simulator and capture actual app
         script: bash scripts/simulator.sh
     artifacts:
-      - build/screenshots/*.png
+      - build/screenshots/**/*.png
       - build/simulator-build.log
       - build/simulator-test.log
       - build/TestResults.xcresult

@@ -9,12 +9,24 @@ enum Theme {
 }
 
 struct RootView: View {
+    @EnvironmentObject private var playback: PlaybackController
     var body: some View {
         TabView {
-            LibraryScreen().tabItem { Label("Kütüphane", systemImage: "play.rectangle.on.rectangle") }
-            WebScreen().tabItem { Label("Web", systemImage: "globe") }
-            InformationScreen().tabItem { Label("Bilgi", systemImage: "info.circle") }
+            MediaLibraryScreen().tabItem { Label("Kütüphane", systemImage: "square.grid.2x2.fill") }
+            MediaLibraryScreen(favoritesOnly: true).tabItem { Label("Favoriler", systemImage: "heart.fill") }
+            DiscoverScreen().tabItem { Label("Keşfet", systemImage: "globe") }
+            SettingsScreen().tabItem { Label("Ayarlar", systemImage: "gearshape.fill") }
         }.tint(Theme.accent)
+            .safeAreaInset(edge: .bottom) {
+                if let source = playback.source {
+                    HStack {
+                        Image(systemName: "play.circle.fill").foregroundStyle(.mint)
+                        Text(source.title).font(.caption).lineLimit(1)
+                        Spacer()
+                        Button("Durdur") { playback.stop() }.font(.caption.bold())
+                    }.padding(12).background(Theme.panel)
+                }
+            }
     }
 }
 

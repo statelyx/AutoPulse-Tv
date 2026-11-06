@@ -1,5 +1,7 @@
 import Foundation
 
+enum MediaKind: String, Codable { case video, photo }
+
 struct MediaSource: Identifiable, Codable, Equatable {
     var id: UUID = UUID()
     var title: String
@@ -8,6 +10,32 @@ struct MediaSource: Identifiable, Codable, Equatable {
     var isFavorite: Bool = false
     var lastPlayed: Date?
     var resumeTime: Double = 0
+    // Optional fields keep libraries created by version 1.0 readable.
+    var kind: MediaKind?
+    var localFileName: String?
+    var photoMovieFileName: String?
+    var providerID: String?
+    var providerStreamPath: [String]?
+    var mediaKind: MediaKind { kind ?? .video }
+    var isLocal: Bool { localFileName != nil }
+    var resolvedURL: URL {
+        if let providerID, let providerStreamPath,
+           let url = AccountVault.read(providerID)?.streamURL(providerStreamPath) { return url }
+        return localFileName.map { LocalMedia.directory.appendingPathComponent(URL(fileURLWithPath: $0).lastPathComponent) } ?? url
+    }
+    var playbackURL: URL {
+        if mediaKind == .photo, let photoMovieFileName {
+            return LocalMedia.directory.appendingPathComponent(URL(fileURLWithPath: photoMovieFileName).lastPathComponent)
+        }
+        return resolvedURL
+    }
+}
+
+enum LocalMedia {
+    static var directory: URL {
+        URL.applicationSupportDirectory.appendingPathComponent("AutoPulse TV/Media", isDirectory: true)
+    }
+    static let byteLimit = 500_000_000
 }
 
 enum SourceValidation {
@@ -20,7 +48,7 @@ enum SourceValidation {
 }
 
 enum MediaError: LocalizedError {
-    case invalidURL, emptyPlaylist, playlistTooLarge, badResponse, corruptLibrary
+    case invalidURL, emptyPlaylist, playlistTooLarge, badResponse, corruptLibrary, unsupportedFile, mediaTooLarge, photoConversion
     var errorDescription: String? {
         switch self {
         case .invalidURL: return "Geçerli bir HTTPS adresi gir. Adreste kullanıcı adı veya parola bulunmamalı."
@@ -28,6 +56,9 @@ enum MediaError: LocalizedError {
         case .playlistTooLarge: return "Liste sınırı aşıldı: en fazla 2 MB ve 2.000 kaynak."
         case .badResponse: return "Sunucu listeyi gönderemedi. Adresi ve erişim hakkını kontrol et."
         case .corruptLibrary: return "Kütüphane okunamadı. Verilerin korundu; dosya düzeltilene kadar değişiklik kaydedilmeyecek."
+        case .unsupportedFile: return "Bu dosya açılamadı. Bir fotoğraf veya desteklenen video dosyası seç."
+        case .mediaTooLarge: return "Bir dosya en fazla 500 MB olabilir."
+        case .photoConversion: return "Fotoğraf sunumu hazırlanamadı. Başka bir fotoğrafla tekrar dene."
         }
     }
 }

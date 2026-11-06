@@ -15,6 +15,7 @@ print((preferred or phones)[0]["udid"])
 STATE=$(xcrun simctl list devices -j | python3 -c 'import json,sys; print(next(d["state"] for ds in json.load(sys.stdin)["devices"].values() for d in ds if d["udid"]==sys.argv[1]))' "$SIMULATOR_ID")
 if [ "$STATE" != "Booted" ]; then xcrun simctl boot "$SIMULATOR_ID"; fi
 xcrun simctl bootstatus "$SIMULATOR_ID" -b
+xcrun simctl status_bar "$SIMULATOR_ID" override --time '9:41' --batteryState charged --batteryLevel 100
 xcodebuild -project AutoPulseTV.xcodeproj -scheme AutoPulseTV -configuration Debug \
   -destination "platform=iOS Simulator,id=$SIMULATOR_ID" \
   -derivedDataPath build/DerivedData CODE_SIGNING_ALLOWED=NO build \
@@ -22,12 +23,9 @@ xcodebuild -project AutoPulseTV.xcodeproj -scheme AutoPulseTV -configuration Deb
 xcodebuild -project AutoPulseTV.xcodeproj -scheme AutoPulseTV \
   -destination "platform=iOS Simulator,id=$SIMULATOR_ID" \
   -derivedDataPath build/DerivedData -resultBundlePath build/TestResults.xcresult \
-  CODE_SIGNING_ALLOWED=NO test 2>&1 | tee build/simulator-test.log
-xcrun simctl status_bar "$SIMULATOR_ID" override --time '9:41' --batteryState charged --batteryLevel 100
-xcrun simctl install "$SIMULATOR_ID" build/DerivedData/Build/Products/Debug-iphonesimulator/AutoPulseTV.app
-xcrun simctl launch "$SIMULATOR_ID" com.statelyxx.autopulsetv
-sleep 3
-xcrun simctl io "$SIMULATOR_ID" screenshot build/screenshots/01-library.png
+  -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=NO test 2>&1 | tee build/simulator-test.log
+xcrun xcresulttool export attachments --path build/TestResults.xcresult --output-path build/phone-attachments
+python3 scripts/export_screenshots.py build/phone-attachments build/screenshots/iphone
 # Capture a real 13-inch iPad screen for the App Store universal app listing.
 IPAD_ID=$(xcrun simctl list devices available -j | python3 -c '
 import json,sys,re
@@ -42,7 +40,10 @@ STATE=$(xcrun simctl list devices -j | python3 -c 'import json,sys; print(next(d
 if [ "$STATE" != "Booted" ]; then xcrun simctl boot "$IPAD_ID"; fi
 xcrun simctl bootstatus "$IPAD_ID" -b
 xcrun simctl status_bar "$IPAD_ID" override --time '9:41' --batteryState charged --batteryLevel 100
-xcrun simctl install "$IPAD_ID" build/DerivedData/Build/Products/Debug-iphonesimulator/AutoPulseTV.app
-xcrun simctl launch "$IPAD_ID" com.statelyxx.autopulsetv
-sleep 3
-xcrun simctl io "$IPAD_ID" screenshot build/screenshots/02-library-ipad.png
+xcodebuild -project AutoPulseTV.xcodeproj -scheme AutoPulseTV \
+  -destination "platform=iOS Simulator,id=$IPAD_ID" \
+  -derivedDataPath build/DerivedData -resultBundlePath build/iPadResults.xcresult \
+  -only-testing:AutoPulseTVUITests/AutoPulseTVUITests/testStoreScreenshots \
+  -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=NO test 2>&1 | tee build/ipad-test.log
+xcrun xcresulttool export attachments --path build/iPadResults.xcresult --output-path build/ipad-attachments
+python3 scripts/export_screenshots.py build/ipad-attachments build/screenshots/ipad

@@ -9,6 +9,8 @@ Geliştirici: Furkan Avcılar
 
 AutoPulse TV, eklediğiniz kaynak adlarını, video adreslerini, favorileri ve uygun videoların oynatma konumlarını cihazın yerel uygulama alanında saklar. Uygulamada geliştirici hesabı, reklam SDK’sı veya geliştiriciye kullanım verisi gönderen analitik bulunmaz. Geliştirici bu kütüphaneye uzaktan erişmez.
 
+Dosyalar ve Fotoğraflar seçicilerinde yalnız seçtiğiniz medya uygulamaya kopyalanır. Fotoğraflar gösterim için boyutlandırılarak JPEG olarak saklanır; AirPlay sunumu için yalnız fotoğrafı içeren sessiz bir video dosyası da cihazda oluşturulur. Orijinal dosyalar değiştirilmez. Özel web kısayolları cihazda saklanır. Xtream hesap bilgileri bu cihaza bağlı Anahtar Zinciri öğelerinde saklanır; kütüphane JSON dosyasına parola yazılmaz.
+
 ## Ağ bağlantıları ve üçüncü taraflar
 
 Video oynatma, uzak M3U listesi yükleme veya bir web sayfası açma sırasında seçtiğiniz içerik sağlayıcısına ağ isteği yapılır. Bu hizmetler IP adresi gibi bağlantı bilgilerini kendi gizlilik politikalarına göre işleyebilir. Uygulama bu sitelerin veri işleme uygulamalarını kontrol etmez. AirPlay kullanımı Apple’ın ve alıcı cihazın hizmetlerine bağlıdır.
@@ -20,6 +22,8 @@ WebKit tarayıcısı çerezleri, site oturumlarını ve web sitesi verilerini ci
 ## Yedekleme ve silme
 
 Kaynaklar uygulama içinden silinebilir. JSON dışa aktarma özelliğini kullandığınızda kütüphanenizin bir kopyasını seçtiğiniz konuma kaydedersiniz; dosyayı paylaşırsanız içindeki kaynak adresleri de paylaşılır. Cihaz ve iCloud yedeklemeleri işletim sistemi ile kendi ayarlarınıza bağlıdır. Uygulamayı silmeniz cihazdaki yerel uygulama verilerini kaldırır; dışa aktardığınız dosyaları ve cihaz yedeklerini ayrıca yönetmeniz gerekir.
+
+JSON yedeği yalnız bağımsız internet kaynaklarını içerir; yerel medya dosyaları ve Xtream hesapları dışa aktarılmaz. Yerel medyayı sildiğinizde uygulamanın oluşturduğu kopya ve fotoğraf sunum videosu da silinir. Anahtar Zinciri hesap kayıtları sistemin saklama davranışına bağlı olarak uygulama silindikten sonra kalabilir.
 
 ## Destek ve değişiklikler
 

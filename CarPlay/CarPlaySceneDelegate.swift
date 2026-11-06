@@ -45,7 +45,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         }
         let sources = AppServices.library.sources.sorted { $0.isFavorite && !$1.isFavorite }
         let items = sources.prefix(CPListTemplate.maximumItemCount).map { source -> CPListItem in
-            let row = CPListItem(text: source.title, detailText: source.group, image: UIImage(systemName: "play.rectangle"))
+            let row = CPListItem(text: source.title, detailText: source.group, image: UIImage(systemName: source.mediaKind == .photo ? "photo" : "play.rectangle"))
             row.playbackConfiguration = CPPlaybackConfiguration(preferredPresentation: .video, playbackAction: .play,
                 elapsedTime: CMTime(seconds: source.resumeTime, preferredTimescale: 600), duration: .zero)
             row.handler = { _, completion in

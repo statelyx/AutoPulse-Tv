@@ -32,6 +32,9 @@ final class LibraryStore: ObservableObject {
         try data.write(to: fileURL, options: [.atomic, .completeFileProtectionUnlessOpen])
         sources = changed
     }
+    #if DEBUG
+    func addPreviewSource(_ source: MediaSource) throws { try commit(sources + [source]) }
+    #endif
     @discardableResult
     func add(title: String, address: String) throws -> MediaSource {
         let url = try SourceValidation.secureURL(address)
@@ -49,7 +52,13 @@ final class LibraryStore: ObservableObject {
         do { try commit(changed) } catch { message = error.localizedDescription }
     }
     func remove(_ source: MediaSource) {
-        do { try commit(sources.filter { $0.id != source.id }) }
+        do {
+            try commit(sources.filter { $0.id != source.id })
+            if source.isLocal {
+                try? FileManager.default.removeItem(at: source.resolvedURL)
+                if source.photoMovieFileName != nil { try? FileManager.default.removeItem(at: source.playbackURL) }
+            }
+        }
         catch { message = error.localizedDescription }
     }
     func favorite(_ source: MediaSource) {
@@ -107,6 +116,11 @@ final class LibraryStore: ObservableObject {
                 _ = try SourceValidation.secureURL(source.url.absoluteString)
                 var copy = source
                 copy.id = UUID()
+                copy.kind = .video
+                copy.localFileName = nil
+                copy.photoMovieFileName = nil
+                copy.providerID = nil
+                copy.providerStreamPath = nil
                 copy.resumeTime = source.resumeTime.isFinite ? min(max(source.resumeTime, 0), 31_536_000) : 0
                 return copy
             }
@@ -115,5 +129,46 @@ final class LibraryStore: ObservableObject {
         guard let text = String(data: data, encoding: .utf8) else { throw MediaError.emptyPlaylist }
         return try importText(text)
     }
-    func exportData() throws -> Data { try JSONEncoder().encode(LibraryBackup(sources: sources)) }
+    func importMedia(_ url: URL, title: String? = nil) async throws {
+        guard sources.count < M3UParser.entryLimit else { throw MediaError.playlistTooLarge }
+        let source = try await MediaImporter.shared.copy(url, title: title)
+        do {
+            guard sources.count < M3UParser.entryLimit else { throw MediaError.playlistTooLarge }
+            try commit(sources + [source])
+        } catch {
+            try? FileManager.default.removeItem(at: source.resolvedURL)
+            if source.photoMovieFileName != nil { try? FileManager.default.removeItem(at: source.playbackURL) }
+            throw error
+        }
+    }
+    func exportData() throws -> Data {
+        // Local media is copied separately by the user; a JSON backup must not
+        // contain sandbox-specific paths that break after restore/reinstall.
+        try JSONEncoder().encode(LibraryBackup(sources: sources.filter { !$0.isLocal && $0.providerID == nil }))
+    }
+
+    func importXtream(_ account: XtreamAccount) async throws -> Int {
+        guard !importing else { throw MediaError.badResponse }
+        importing = true
+        defer { importing = false }
+        var request = URLRequest(url: account.playlistURL)
+        request.timeoutInterval = 30
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        let session = URLSession(configuration: .ephemeral)
+        defer { session.invalidateAndCancel() }
+        let (bytes, response) = try await session.bytes(for: request)
+        guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode),
+            response.url?.scheme == "https", response.expectedContentLength <= Int64(M3UParser.byteLimit) else { throw MediaError.badResponse }
+        var data = Data()
+        for try await byte in bytes {
+            guard data.count < M3UParser.byteLimit else { throw MediaError.playlistTooLarge }
+            data.append(byte)
+        }
+        guard let text = String(data: data, encoding: .utf8) else { throw MediaError.emptyPlaylist }
+        let sanitized = try M3UParser.parse(text).compactMap { account.sanitize($0) }
+        guard !sanitized.isEmpty else { throw MediaError.emptyPlaylist }
+        try Task.checkCancellation()
+        try AccountVault.save(account)
+        return try merge(sanitized)
+    }
 }

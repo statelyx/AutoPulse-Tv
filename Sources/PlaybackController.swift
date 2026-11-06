@@ -4,29 +4,39 @@ import SwiftUI
 
 @MainActor
 final class PlaybackController: ObservableObject {
-    let player = AVPlayer()
+    let player = AVQueuePlayer()
+    private var photoLooper: AVPlayerLooper?
     @Published private(set) var source: MediaSource?
     @Published private(set) var failure: String?
     @Published private(set) var loading = false
+    @Published var pictureInPictureActive = false
     private var statusObserver: NSKeyValueObservation?
     private var waitingObserver: NSKeyValueObservation?
     private var pendingResume: Double = 0
     func open(_ source: MediaSource) {
         stop()
         self.source = source
-        pendingResume = source.resumeTime
+        if let providerID = source.providerID, AccountVault.read(providerID) == nil {
+            failure = "Bu hesabı Kaynak ekle > Xtream hesabı bölümünden yeniden bağla."
+            return
+        }
+        pendingResume = source.mediaKind == .photo ? 0 : source.resumeTime
         failure = nil
         loading = true
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .moviePlayback)
             try AVAudioSession.sharedInstance().setActive(true)
         } catch { failure = "Ses oturumu başlatılamadı: \(error.localizedDescription)" }
-        let item = AVPlayerItem(url: source.url)
+        let item = AVPlayerItem(url: source.playbackURL)
         player.allowsExternalPlayback = true
         player.usesExternalPlaybackWhileExternalScreenIsActive = true
         player.automaticallyWaitsToMinimizeStalling = true
-        player.replaceCurrentItem(with: item)
-        statusObserver = item.observe(\.status, options: [.initial, .new]) { [weak self] item, _ in
+        if source.mediaKind == .photo {
+            photoLooper = AVPlayerLooper(player: player, templateItem: item)
+            loading = false
+        } else { player.replaceCurrentItem(with: item) }
+        let observedItem = player.currentItem ?? item
+        statusObserver = observedItem.observe(\.status, options: [.initial, .new]) { [weak self] item, _ in
             let status = item.status
             Task { @MainActor [weak self] in
                 guard let self, self.player.currentItem === item else { return }
@@ -53,16 +63,20 @@ final class PlaybackController: ObservableObject {
         player.play()
     }
     var position: Double {
+        guard source?.mediaKind != .photo else { return 0 }
         let value = player.currentTime().seconds
         return PlaybackPositionPolicy.savedPosition(current: value, duration: player.currentItem?.duration.seconds ?? .nan)
     }
     func stop() {
+        photoLooper?.disableLooping()
+        photoLooper = nil
         statusObserver = nil
         waitingObserver = nil
         player.pause()
         player.replaceCurrentItem(with: nil)
         source = nil
         loading = false
+        pictureInPictureActive = false
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 }
@@ -77,7 +91,7 @@ struct PlayerScreen: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    VideoPlayer(player: playback.player)
+                    NativePlayer(player: playback.player, onPiPChange: { playback.pictureInPictureActive = $0 })
                         .aspectRatio(16.0 / 9.0, contentMode: .fit).clipShape(RoundedRectangle(cornerRadius: 20))
                     if playback.loading { ProgressView("Kaynak açılıyor…") }
                     if let failure = playback.failure {
@@ -95,7 +109,7 @@ struct PlayerScreen: View {
                     Button("Tam ekran", systemImage: "arrow.up.left.and.arrow.down.right") { fullScreen = true }
                         .buttonStyle(.borderedProminent).tint(.mint)
                     Label("AirPlay ile büyük ekrana", systemImage: "airplayvideo").font(.headline)
-                    Text("Hedef seçicisinde yalnızca desteklenen alıcılar görünür. Araçta video kullanımı resmi Video in the Car desteğine ve park koşuluna bağlıdır.")
+                    Text(source.mediaKind == .photo ? "Bu sessiz sunum döngüsü yalnız seçtiğin fotoğrafı gösterir. AirPlay hedefinden desteklenen alıcıyı seç. Araç desteği sisteme bağlıdır." : "Hedef seçicisinde yalnızca desteklenen alıcılar görünür. Desteklenen videoda Resim İçinde Resim’i açıp Bitti ile kütüphaneye dönebilirsin.")
                         .foregroundStyle(.secondary)
                 }.padding()
             }
@@ -106,13 +120,13 @@ struct PlayerScreen: View {
                 if playback.source?.id != source.id { playback.open(source) }
             }
             .onDisappear {
-                guard !fullScreen else { return }
+                guard !fullScreen, !playback.pictureInPictureActive else { return }
                 library.recordPlayback(source.id, seconds: playback.position)
                 playback.stop()
             }
             .fullScreenCover(isPresented: $fullScreen) {
                 ZStack(alignment: .topTrailing) {
-                    NativePlayer(player: playback.player).ignoresSafeArea()
+                    NativePlayer(player: playback.player, onPiPChange: { playback.pictureInPictureActive = $0 }).ignoresSafeArea()
                     Button("Kapat") { fullScreen = false }.buttonStyle(.borderedProminent).padding()
                 }.background(.black)
             }
@@ -122,15 +136,27 @@ struct PlayerScreen: View {
 
 struct NativePlayer: UIViewControllerRepresentable {
     let player: AVPlayer
+    var onPiPChange: (Bool) -> Void = { _ in }
+    func makeCoordinator() -> Coordinator { Coordinator(onPiPChange: onPiPChange) }
     func makeUIViewController(context: Context) -> AVPlayerViewController {
         let controller = AVPlayerViewController()
         controller.player = player
         controller.showsPlaybackControls = true
         controller.videoGravity = .resizeAspect
+        controller.allowsPictureInPicturePlayback = true
+        controller.canStartPictureInPictureAutomaticallyFromInline = true
+        controller.delegate = context.coordinator
         return controller
     }
     func updateUIViewController(_ controller: AVPlayerViewController, context: Context) {
         controller.player = player
+    }
+    final class Coordinator: NSObject, AVPlayerViewControllerDelegate {
+        let onPiPChange: (Bool) -> Void
+        init(onPiPChange: @escaping (Bool) -> Void) { self.onPiPChange = onPiPChange }
+        func playerViewControllerDidStartPictureInPicture(_ playerViewController: AVPlayerViewController) { onPiPChange(true) }
+        func playerViewControllerDidStopPictureInPicture(_ playerViewController: AVPlayerViewController) { onPiPChange(false) }
+        func playerViewController(_ playerViewController: AVPlayerViewController, restoreUserInterfaceForPictureInPictureStopWithCompletionHandler completionHandler: @escaping (Bool) -> Void) { completionHandler(false) }
     }
 }
 
