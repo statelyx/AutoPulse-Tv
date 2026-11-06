@@ -11,7 +11,7 @@ targets:
     info:
       path: build/CarPlay-Info.plist
       properties:
-        CFBundleDisplayName: Molaqo
+        CFBundleDisplayName: Molaqo TV
         UILaunchScreen: {}
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: true

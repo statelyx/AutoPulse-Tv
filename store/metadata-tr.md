@@ -1,6 +1,6 @@
 # Türkçe mağaza metinleri — yüklenmedi
 
-Ad: Molaqo: Video Kütüphanesi
+Ad: Molaqo TV: Video Oynatıcı
 
 Alt başlık: Kendi videoların, tek yerde
 
@@ -8,7 +8,7 @@ Tanıtım metni: Video bağlantılarını kaydet, kişisel kütüphaneni düzenl
 
 Açıklama:
 
-Molaqo, kendi video kaynaklarını bir arada tutman için tasarlanmış kişisel bir medya oynatıcısıdır.
+Molaqo TV, kendi video kaynaklarını bir arada tutman için tasarlanmış kişisel bir medya oynatıcısıdır.
 
 • HTTPS HLS, MP4 ve MOV bağlantılarını kütüphanene ekle.
 • Kaydettiğin kaynaklara tekrar kolayca ulaş.
@@ -16,7 +16,7 @@ Molaqo, kendi video kaynaklarını bir arada tutman için tasarlanmış kişisel
 • AirPlay hedef seçicisiyle desteklenen alıcılara bağlan.
 • YouTube ve diğer HTTPS sitelerini uygulama içindeki WebKit tarayıcıda aç.
 
-Molaqo hazır TV kanalları, film kataloğu veya ücretli içerik erişimi sağlamaz. Kendi içeriklerini veya kullanım hakkına sahip olduğun kaynakları ekle. Oynatma; kaynağın biçimine, ağ bağlantısına ve erişim koşullarına bağlıdır.
+Molaqo TV hazır TV kanalları, film kataloğu veya ücretli içerik erişimi sağlamaz. Kendi içeriklerini veya kullanım hakkına sahip olduğun kaynakları ekle. Oynatma; kaynağın biçimine, ağ bağlantısına ve erişim koşullarına bağlıdır.
 
 Araç ekranında video kullanımı uyumlu araç, işletim sistemi ve alıcı desteği gerektirir. Bu sürüm CarPlay ekranında uygulama veya tarayıcı arayüzü sunmaz. YouTube videolarının araç ekranında oynatılması vaat edilmez. Araç ekranında video yalnızca park halinde kullanılmalıdır.
 

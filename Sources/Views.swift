@@ -82,7 +82,7 @@ struct LibraryScreen: View {
                 }.listRowBackground(Theme.panel)
             }
             .scrollContentBackground(.hidden).background(Theme.background)
-            .navigationTitle("Molaqo")
+            .navigationTitle("Molaqo TV")
             .searchable(text: $query, prompt: "Kaynak veya grup ara")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -209,7 +209,7 @@ struct InformationScreen: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Molaqo 1.0") {
+                Section("Molaqo TV 1.0") {
                     Label("Molan için tasarlandı", systemImage: "parkingsign.circle").font(.headline)
                     Text("Kendi video kaynaklarını kaydet, listelerini düzenle ve desteklenen alıcılarda AirPlay kullan.")
                 }
@@ -228,7 +228,7 @@ struct InformationScreen: View {
                     Text("Dışa aktardığın JSON dosyası özel video bağlantıları içerebilir. Yalnız güvendiğin kişilerle paylaş.")
                 }
                 Section("İçerik") {
-                    Text("Molaqo içerik veya TV kanalı sağlamaz. Yalnız kendi veya kullanım hakkına sahip olduğun kaynakları kullan. DRM korumalı ya da özel oturum isteyen her kaynak desteklenmeyebilir.")
+                    Text("Molaqo TV içerik veya TV kanalı sağlamaz. Yalnız kendi veya kullanım hakkına sahip olduğun kaynakları kullan. DRM korumalı ya da özel oturum isteyen her kaynak desteklenmeyebilir.")
                 }
             }.navigationTitle("Bilgi")
         }

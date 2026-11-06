@@ -1,6 +1,6 @@
 # Review and TestFlight notes — draft, not submitted
 
-Molaqo is a personal media URL library and player. It does not supply channels, subscriptions or a licensed streaming catalog. No login is required.
+Molaqo TV is a personal media URL library and player. It does not supply channels, subscriptions or a licensed streaming catalog. No login is required.
 
 Testing: enter a reachable HTTPS HLS (.m3u8), MP4 or MOV URL for content you have permission to use, give it a name, save, then tap the saved source. Use native playback controls. The route picker lists supported external receivers. Swipe a saved entry to delete it and relaunch to verify persistence.
 

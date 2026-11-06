@@ -1,4 +1,4 @@
-# Molaqo
+# Molaqo TV
 
 Yerel iPhone/iPad video kütüphanesi ve isteğe bağlı resmi CarPlay video entegrasyonu. Kaynak kodu teslimidir; Apple SDK ile derlendiği veya gerçek araçta çalıştığı henüz doğrulanmadı.
 
