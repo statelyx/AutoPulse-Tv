@@ -18,7 +18,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: molaqo-verification
+          name: autopulsetv-verification
           path: |
             build/*.log
             build/screenshots

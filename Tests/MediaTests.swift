@@ -1,5 +1,5 @@
 import XCTest
-@testable import Molaqo
+@testable import AutoPulseTV
 
 final class MediaTests: XCTestCase {
     func testLiveAndCompletedPlaybackNeverSeekToOldPosition() {

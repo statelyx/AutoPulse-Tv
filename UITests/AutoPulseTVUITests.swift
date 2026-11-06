@@ -1,6 +1,6 @@
 import XCTest
 
-final class MolaqoUITests: XCTestCase {
+final class AutoPulseTVUITests: XCTestCase {
     @MainActor
     func testCreateSourceAndCaptureScreens() {
         let app = XCUIApplication()

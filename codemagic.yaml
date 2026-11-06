@@ -1,6 +1,6 @@
 workflows:
   simulator:
-    name: Molaqo simulator validation
+    name: AutoPulseTV simulator validation
     instance_type: mac_mini_m2
     max_build_duration: 30
     environment:
@@ -18,20 +18,20 @@ workflows:
       - build/simulator-build.log
       - build/simulator-test.log
       - build/TestResults.xcresult
-      - build/DerivedData/Build/Products/Debug-iphonesimulator/Molaqo.app
+      - build/DerivedData/Build/Products/Debug-iphonesimulator/AutoPulseTV.app
   testflight:
-    name: Molaqo signed TestFlight build
+    name: AutoPulseTV signed TestFlight build
     instance_type: mac_mini_m2
     max_build_duration: 45
     integrations:
-      app_store_connect: Molaqo App Store Connect
+      app_store_connect: AutoPulseTV App Store Connect
     environment:
       xcode: latest
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.statelyxx.molaqo
+        bundle_identifier: com.statelyxx.autopulsetv
       vars:
-        BUNDLE_ID: com.statelyxx.molaqo
+        BUNDLE_ID: com.statelyxx.autopulsetv
         # Use project-carplay.yml only after entitlement and compatible-car tests.
         PROJECT_SPEC: project.yml
     scripts:
@@ -45,7 +45,7 @@ workflows:
       - name: Archive and export
         script: |
           set -euo pipefail
-          xcode-project build-ipa --project Molaqo.xcodeproj --scheme Molaqo \
+          xcode-project build-ipa --project AutoPulseTV.xcodeproj --scheme AutoPulseTV \
             --archive-xcargs "CURRENT_PROJECT_VERSION=${BUILD_NUMBER}"
     artifacts:
       - build/ios/ipa/*.ipa

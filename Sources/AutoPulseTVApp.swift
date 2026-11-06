@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct MolaqoApp: App {
+struct AutoPulseTVApp: App {
     @StateObject private var library = AppServices.library
     @StateObject private var playback = AppServices.playback
     var body: some Scene {

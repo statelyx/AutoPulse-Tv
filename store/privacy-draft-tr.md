@@ -1,6 +1,6 @@
-# Molaqo TV gizlilik metni — yayın öncesi taslak
+# AutoPulse TV gizlilik metni — yayın öncesi taslak
 
-Molaqo TV'in mevcut prototipi kaynak adlarını ve video adreslerini cihazın yerel uygulama alanında saklar. Bu kaynak kodunda geliştiriciye veri gönderen analitik, reklam SDK'sı veya kullanıcı hesabı bulunmaz.
+AutoPulse TV'in mevcut prototipi kaynak adlarını ve video adreslerini cihazın yerel uygulama alanında saklar. Bu kaynak kodunda geliştiriciye veri gönderen analitik, reklam SDK'sı veya kullanıcı hesabı bulunmaz.
 
 Bir video açıldığında içerik sağlayıcısına ağ isteği yapılır. Sağlayıcı, IP adresi gibi bağlantı bilgilerini kendi hizmeti kapsamında işleyebilir. YouTube tarayıcı görünümünde açıldığında ilgili hizmetin gizlilik politikası geçerlidir. AirPlay kullanımı Apple'ın ve alıcı cihazın hizmetlerine bağlıdır.
 

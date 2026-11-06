@@ -82,7 +82,7 @@ struct LibraryScreen: View {
                 }.listRowBackground(Theme.panel)
             }
             .scrollContentBackground(.hidden).background(Theme.background)
-            .navigationTitle("Molaqo TV")
+            .navigationTitle("AutoPulse TV")
             .searchable(text: $query, prompt: "Kaynak veya grup ara")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -98,7 +98,7 @@ struct LibraryScreen: View {
             }
             .sheet(isPresented: $add) { AddSourceScreen() }
             .sheet(item: $selected) { PlayerScreen(source: $0) }
-            .fileExporter(isPresented: $exporting, document: backup, contentType: .json, defaultFilename: "Molaqo-kutuphanem") { result in
+            .fileExporter(isPresented: $exporting, document: backup, contentType: .json, defaultFilename: "AutoPulseTV-kutuphanem") { result in
                 if case .failure(let error) = result { library.message = error.localizedDescription }
             }
             .alert("Kütüphane", isPresented: Binding(get: { library.message != nil }, set: { if !$0 { library.message = nil } })) {
@@ -209,7 +209,7 @@ struct InformationScreen: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Molaqo TV 1.0") {
+                Section("AutoPulse TV 1.0") {
                     Label("Molan için tasarlandı", systemImage: "parkingsign.circle").font(.headline)
                     Text("Kendi video kaynaklarını kaydet, listelerini düzenle ve desteklenen alıcılarda AirPlay kullan.")
                 }
@@ -228,7 +228,7 @@ struct InformationScreen: View {
                     Text("Dışa aktardığın JSON dosyası özel video bağlantıları içerebilir. Yalnız güvendiğin kişilerle paylaş.")
                 }
                 Section("İçerik") {
-                    Text("Molaqo TV içerik veya TV kanalı sağlamaz. Yalnız kendi veya kullanım hakkına sahip olduğun kaynakları kullan. DRM korumalı ya da özel oturum isteyen her kaynak desteklenmeyebilir.")
+                    Text("AutoPulse TV içerik veya TV kanalı sağlamaz. Yalnız kendi veya kullanım hakkına sahip olduğun kaynakları kullan. DRM korumalı ya da özel oturum isteyen her kaynak desteklenmeyebilir.")
                 }
             }.navigationTitle("Bilgi")
         }

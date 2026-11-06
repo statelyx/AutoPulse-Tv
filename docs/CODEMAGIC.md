@@ -1,6 +1,6 @@
 # Codemagic başlangıcı
 
-Depo kökünde project.yml, codemagic.yaml, Sources ve Resources klasörleri birlikte bulunmalı. Tüm outputs klasörünü depo kökü olarak yükleme; Molaqo klasörünün içeriğini kullan.
+Depo kökünde project.yml, codemagic.yaml, Sources ve Resources klasörleri birlikte bulunmalı. Tüm outputs klasörünü depo kökü olarak yükleme; AutoPulseTV klasörünün içeriğini kullan.
 
 ## İlk derleme: simulator
 
@@ -12,9 +12,9 @@ Depo kökünde project.yml, codemagic.yaml, Sources ve Resources klasörleri bir
 
 ## İkinci derleme: testflight
 
-Apple hesabında uygulama kaydı, benzersiz bundle ID ve dağıtım yetkileri hazır olmalı. Varsayılan bundle ID `com.statelyxx.molaqo`; Apple kaydı farklıysa project.yml ve codemagic.yaml birlikte değiştirilmeli.
+Apple hesabında uygulama kaydı, benzersiz bundle ID ve dağıtım yetkileri hazır olmalı. Varsayılan bundle ID `com.statelyxx.autopulsetv`; Apple kaydı farklıysa project.yml ve codemagic.yaml birlikte değiştirilmeli.
 
-Codemagic'te yetkili mevcut entegrasyonun adını YAML'daki `Molaqo App Store Connect` yerine yaz. App Store dağıtım sertifikası ve profile ihtiyaç var. Anahtar veya sertifika dosyalarını Git deposuna ekleme.
+Codemagic'te yetkili mevcut entegrasyonun adını YAML'daki `AutoPulseTV App Store Connect` yerine yaz. App Store dağıtım sertifikası ve profile ihtiyaç var. Anahtar veya sertifika dosyalarını Git deposuna ekleme.
 
 Bu ayarlar doğrulanınca `testflight` işi imzalı IPA oluşturup Apple'a yükler ve beta işleme/gönderimini ister. Beta grubuna erişim, Apple processing ve gerektiğinde beta review ayrı aşamalardır. Build numarası Codemagic BUILD_NUMBER ile artar; başka bir pipeline kullanıldıysa çakışmadığını kontrol et.
 

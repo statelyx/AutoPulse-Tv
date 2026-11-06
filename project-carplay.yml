@@ -2,23 +2,23 @@
 include:
   - project.yml
 targets:
-  Molaqo:
+  AutoPulseTV:
     deploymentTarget: '27.0'
     sources:
       - CarPlay/CarPlaySceneDelegate.swift
     entitlements:
-      path: CarPlay/Molaqo.entitlements
+      path: CarPlay/AutoPulseTV.entitlements
     info:
       path: build/CarPlay-Info.plist
       properties:
-        CFBundleDisplayName: Molaqo TV
+        CFBundleDisplayName: AutoPulse TV
         UILaunchScreen: {}
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: true
           UISceneConfigurations:
             CPTemplateApplicationSceneSessionRoleApplication:
               - UISceneClassName: CPTemplateApplicationScene
-                UISceneConfigurationName: Molaqo CarPlay
+                UISceneConfigurationName: AutoPulseTV CarPlay
                 UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).CarPlaySceneDelegate
     settings:
       base:

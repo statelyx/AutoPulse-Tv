@@ -40,7 +40,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         guard configuration.supportsVideoPlayback else {
             let item = CPListItem(text: "Araç video desteği bulunamadı", detailText: "Video in the Car destekli bir sistem gerekir.")
             item.isEnabled = false
-            controller.setRootTemplate(CPListTemplate(title: "Molaqo TV", sections: [CPListSection(items: [item])]), animated: false, completion: nil)
+            controller.setRootTemplate(CPListTemplate(title: "AutoPulse TV", sections: [CPListSection(items: [item])]), animated: false, completion: nil)
             return
         }
         let sources = AppServices.library.sources.sorted { $0.isFavorite && !$1.isFavorite }
@@ -60,7 +60,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         let empty = CPListItem(text: "Kütüphanen boş", detailText: "Park halindeyken iPhone'dan kaynak ekle.")
         empty.isEnabled = false
         let section = CPListSection(items: items.isEmpty ? [empty] : items)
-        let template = CPListTemplate(title: "Molaqo TV", sections: [section])
+        let template = CPListTemplate(title: "AutoPulse TV", sections: [section])
         let pause = CPBarButton(title: "Duraklat") { _ in AppServices.playback.player.pause() }
         let resume = CPBarButton(title: "Oynat") { _ in AppServices.playback.player.play() }
         template.trailingNavigationBarButtons = [pause, resume]

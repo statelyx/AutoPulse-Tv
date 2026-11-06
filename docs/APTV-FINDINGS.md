@@ -4,7 +4,7 @@
 
 ## İki farklı kırılma
 
-APTV'nin teknik açıklaması, eski CarPlay video yönteminin iOS 26.4'teki beklenmeyen izin davranışına dayandığını ve iOS 27.2'de kapatıldığını belirtiyor. Bu geliştirici açıklamasıdır; bağımsız yama analizi veya CVE kanıtı değildir. Molaqo'da aynı davranışın gizlenerek sürdürülmesi uygulanmadı.
+APTV'nin teknik açıklaması, eski CarPlay video yönteminin iOS 26.4'teki beklenmeyen izin davranışına dayandığını ve iOS 27.2'de kapatıldığını belirtiyor. Bu geliştirici açıklamasıdır; bağımsız yama analizi veya CVE kanıtı değildir. AutoPulseTV'da aynı davranışın gizlenerek sürdürülmesi uygulanmadı.
 
 Kaynak: https://docs.aptvapp.com/chang-jian-wen-ti/carplay-video-differences-en
 
@@ -18,13 +18,13 @@ Kaynak: https://github.com/Kimentanm/aptv/issues/195
 
 ## APTV'nin gerçek kapsamı
 
-Görünen resmi depo M3U/M3U8, program rehberi, arşiv oynatma, iCloud ve platform desteğini tanıtıyor. Tam uygulama kaynakları görünmediğinden iç mimariyi birebir bildiğimiz söylenemez. Molaqo sıfırdan yazıldı; APTV'nin ikili dosyası, özel API implementasyonu veya lisansı belirsiz kaynakları kopyalanmadı.
+Görünen resmi depo M3U/M3U8, program rehberi, arşiv oynatma, iCloud ve platform desteğini tanıtıyor. Tam uygulama kaynakları görünmediğinden iç mimariyi birebir bildiğimiz söylenemez. AutoPulseTV sıfırdan yazıldı; APTV'nin ikili dosyası, özel API implementasyonu veya lisansı belirsiz kaynakları kopyalanmadı.
 
 Kaynak: https://github.com/Kimentanm/aptv
 
 ## Sorundan karara
 
-| Bulgu / risk | Molaqo'daki karar | Doğrulama durumu |
+| Bulgu / risk | AutoPulseTV'daki karar | Doğrulama durumu |
 | --- | --- | --- |
 | OS tarafından kapatılabilen gayriresmi video yolu | Resmi CarPlay video entitlement ve CPSessionConfiguration yetenek kontrolü | Kod var; Apple SDK / araç testi yok |
 | Araç video desteğinin belirsizliği | Desteksiz alıcıya açıklama, ayrı CarPlay build spec | Araç üzerinde doğrulanmadı |
@@ -36,7 +36,7 @@ Kaynak: https://github.com/Kimentanm/aptv
 
 ## Ses/görüntü neden “kesin düzeldi” denemez?
 
-Issue #173'te bir kullanıcı KSPlayer ile HLS/TS arşiv oynatımında ses atlaması bildiriyor; VLC karşılaştırması da kullanıcı beyanı. Zaman damgası sorununa ilişkin şüphe henüz kanıtlanmış kök neden değil. Molaqo AVPlayer kullanır; bu seçim tüm bozuk kaynaklarda aynı hatayı giderdiğimiz anlamına gelmez. Aynı akış ve donanımla uzun süreli ölçüm gerekir.
+Issue #173'te bir kullanıcı KSPlayer ile HLS/TS arşiv oynatımında ses atlaması bildiriyor; VLC karşılaştırması da kullanıcı beyanı. Zaman damgası sorununa ilişkin şüphe henüz kanıtlanmış kök neden değil. AutoPulseTV AVPlayer kullanır; bu seçim tüm bozuk kaynaklarda aynı hatayı giderdiğimiz anlamına gelmez. Aynı akış ve donanımla uzun süreli ölçüm gerekir.
 
 Kaynak: https://github.com/Kimentanm/aptv/issues/173
 

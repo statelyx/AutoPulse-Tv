@@ -1,4 +1,4 @@
-# Molaqo TV
+# AutoPulse TV
 
 Yerel iPhone/iPad video kütüphanesi ve isteğe bağlı resmi CarPlay video entegrasyonu. Kaynak kodu teslimidir; Apple SDK ile derlendiği veya gerçek araçta çalıştığı henüz doğrulanmadı.
 
@@ -21,10 +21,10 @@ Mac üzerinde Xcode ve XcodeGen ile:
 
 ```sh
 xcodegen generate
-open Molaqo.xcodeproj
+open AutoPulseTV.xcodeproj
 ```
 
-Xcode'da Team ve kullanılabilir bundle ID seç. Scheme: Molaqo. Testleri Xcode Product > Test ile veya `bash scripts/simulator.sh` komutuyla çalıştır.
+Xcode'da Team ve kullanılabilir bundle ID seç. Scheme: AutoPulseTV. Testleri Xcode Product > Test ile veya `bash scripts/simulator.sh` komutuyla çalıştır.
 
 CarPlay yetkisi alındıktan sonraki ayrı derleme:
 
