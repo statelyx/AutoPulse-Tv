@@ -20,6 +20,13 @@ struct PhotoScreen: View {
             if let image {
                 ZoomPhoto(image: image).ignoresSafeArea()
                     .accessibilityIdentifier("photoImageReady")
+                    .onAppear {
+                        #if DEBUG
+                        if ScreenshotFixtures.page == "photo" {
+                            DispatchQueue.main.async { ScreenshotFixtures.markReady("photo") }
+                        }
+                        #endif
+                    }
                     .onTapGesture { withAnimation { controls.toggle() } }
             } else if loadFailed {
                 ContentUnavailableView("Fotoğraf bulunamadı", systemImage: "photo.badge.exclamationmark", description: Text("Dosyayı yeniden içe aktarabilirsin."))

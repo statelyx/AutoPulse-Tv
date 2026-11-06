@@ -129,6 +129,9 @@ struct MediaCard: View {
                     guard let result = try? await generator.image(at: .zero) else { return nil as UIImage? }
                     return UIImage(cgImage: result.image)
                 }.value
+                #if DEBUG
+                if thumbnail != nil && source.mediaKind == .photo { ScreenshotFixtures.thumbnailLoaded(source.id) }
+                #endif
             }
     }
 }

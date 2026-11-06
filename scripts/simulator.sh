@@ -28,8 +28,34 @@ xcodebuild -project AutoPulseTV.xcodeproj -scheme AutoPulseTV \
 PHONE_TEST_STATUS=$?
 set -e
 xcrun xcresulttool export attachments --path build/TestResults.xcresult --output-path build/phone-attachments
-python3 scripts/export_screenshots.py build/phone-attachments build/screenshots/iphone
 if [ "$PHONE_TEST_STATUS" -ne 0 ]; then exit "$PHONE_TEST_STATUS"; fi
+capture_store_pages() {
+  local device="$1" output="$2"
+  mkdir -p "$output"
+  xcrun simctl install "$device" build/DerivedData/Build/Products/Debug-iphonesimulator/AutoPulseTV.app
+  local container marker ready number=0
+  container=$(xcrun simctl get_app_container "$device" com.statelyxx.autopulsetv data)
+  marker="$container/Library/Caches/autopulse-store-ready.txt"
+  for page in library import discover photo; do
+    number=$((number + 1))
+    xcrun simctl terminate "$device" com.statelyxx.autopulsetv >/dev/null 2>&1 || true
+    python3 -c 'from pathlib import Path; import sys; Path(sys.argv[1]).unlink(missing_ok=True)' "$marker"
+    xcrun simctl launch "$device" com.statelyxx.autopulsetv -store-page "$page"
+    ready=0
+    for attempt in $(seq 1 90); do
+      if [ "$(cat "$marker" 2>/dev/null || true)" = "$page" ]; then ready=1; break; fi
+      sleep 1
+    done
+    if [ "$ready" -ne 1 ]; then
+      xcrun simctl io "$device" screenshot "$output/diagnostic-$page.png"
+      echo "Screenshot page did not become ready: $page" >&2
+      exit 1
+    fi
+    xcrun simctl io "$device" screenshot "$output/0$number-$page.png"
+  done
+  xcrun simctl terminate "$device" com.statelyxx.autopulsetv
+}
+capture_store_pages "$SIMULATOR_ID" build/screenshots/iphone
 # Capture a real 13-inch iPad screen for the App Store universal app listing.
 IPAD_ID=$(xcrun simctl list devices available -j | python3 -c '
 import json,sys,re
@@ -44,14 +70,4 @@ STATE=$(xcrun simctl list devices -j | python3 -c 'import json,sys; print(next(d
 if [ "$STATE" != "Booted" ]; then xcrun simctl boot "$IPAD_ID"; fi
 xcrun simctl bootstatus "$IPAD_ID" -b
 xcrun simctl status_bar "$IPAD_ID" override --time '9:41' --batteryState charged --batteryLevel 100
-set +e
-xcodebuild -project AutoPulseTV.xcodeproj -scheme AutoPulseTV \
-  -destination "platform=iOS Simulator,id=$IPAD_ID" \
-  -derivedDataPath build/DerivedData -resultBundlePath build/iPadResults.xcresult \
-  -only-testing:AutoPulseTVUITests/AutoPulseTVUITests/testStoreScreenshots \
-  -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=NO test 2>&1 | tee build/ipad-test.log
-IPAD_TEST_STATUS=$?
-set -e
-xcrun xcresulttool export attachments --path build/iPadResults.xcresult --output-path build/ipad-attachments
-python3 scripts/export_screenshots.py build/ipad-attachments build/screenshots/ipad
-if [ "$IPAD_TEST_STATUS" -ne 0 ]; then exit "$IPAD_TEST_STATUS"; fi
+capture_store_pages "$IPAD_ID" build/screenshots/ipad

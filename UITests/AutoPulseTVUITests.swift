@@ -44,23 +44,6 @@ final class AutoPulseTVUITests: XCTestCase {
         XCTAssertTrue(photo.waitForExistence(timeout: 10))
         app.terminate()
     }
-    @MainActor
-    func testStoreScreenshots() {
-        let app = XCUIApplication()
-        XCUIDevice.shared.orientation = .portrait
-        for page in ["library", "import", "discover", "photo"] {
-            app.launchArguments = ["-store-page", page]
-            app.launch()
-            XCTAssertTrue(app.descendants(matching: .any)["storeScreenshotReady"].waitForExistence(timeout: 90))
-            if page == "library" { XCTAssertTrue(app.buttons["media-Göl kenarında"].waitForExistence(timeout: 15)) }
-            if page == "photo" {
-                XCTAssertTrue(app.buttons["photoAirPlay"].waitForExistence(timeout: 15))
-                XCTAssertTrue(app.descendants(matching: .any)["photoImageReady"].waitForExistence(timeout: 15))
-            }
-            capture("store-\(page)")
-            app.terminate()
-        }
-    }
     @MainActor private func capture(_ name: String) {
         let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
         attachment.name = name

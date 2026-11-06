@@ -3,6 +3,22 @@ import SwiftUI
 import UIKit
 
 enum ScreenshotFixtures {
+    @MainActor private static var libraryLaidOut = false
+    @MainActor private static var thumbnailIDs = Set<UUID>()
+    @MainActor static func thumbnailLoaded(_ id: UUID) {
+        thumbnailIDs.insert(id)
+        if libraryLaidOut && thumbnailIDs.count >= 2 { markReady("library") }
+    }
+    @MainActor static func layoutReady(_ page: String) {
+        if page == "library" {
+            libraryLaidOut = true
+            if thumbnailIDs.count >= 2 { markReady(page) }
+        } else { markReady(page) }
+    }
+    @MainActor static func markReady(_ page: String) {
+        let url = URL.cachesDirectory.appendingPathComponent("autopulse-store-ready.txt")
+        try? page.write(to: url, atomically: true, encoding: .utf8)
+    }
     static var page: String? {
         let args = ProcessInfo.processInfo.arguments
         guard let index = args.firstIndex(of: "-store-page"), args.indices.contains(index + 1) else { return nil }
@@ -98,7 +114,33 @@ struct StoreScreenshotFrame: View {
                 Spacer(minLength: 0)
             }.frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(LinearGradient(colors: [Color(red: 0.03, green: 0.17, blue: 0.20), Theme.background, Theme.background], startPoint: .topLeading, endPoint: .bottomTrailing))
+                .overlay(alignment: .topLeading) {
+                    if page != "photo" { PreviewLayoutMarker(page: page).frame(width: 1, height: 1).accessibilityHidden(true) }
+                }
         }.ignoresSafeArea().statusBarHidden()
+    }
+}
+
+private struct PreviewLayoutMarker: UIViewRepresentable {
+    let page: String
+    func makeUIView(context: Context) -> MarkerView { MarkerView(page: page) }
+    func updateUIView(_ view: MarkerView, context: Context) {}
+    final class MarkerView: UIView {
+        let page: String
+        private var signalled = false
+        init(page: String) {
+            self.page = page
+            super.init(frame: .zero)
+            isUserInteractionEnabled = false
+            isAccessibilityElement = false
+        }
+        required init?(coder: NSCoder) { fatalError("init(coder:) is not used") }
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            guard !signalled, window != nil, bounds.width > 0 else { return }
+            signalled = true
+            DispatchQueue.main.async { ScreenshotFixtures.layoutReady(self.page) }
+        }
     }
 }
 #endif
