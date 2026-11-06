@@ -20,7 +20,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         refresh()
     }
 
-    func templateApplicationScene(_ scene: CPTemplateApplicationScene, didDisconnect interfaceController: CPInterfaceController) {
+    func templateApplicationScene(_ scene: CPTemplateApplicationScene, didDisconnectInterfaceController interfaceController: CPInterfaceController) {
         if let source = AppServices.playback.source {
             AppServices.library.recordPlayback(source.id, seconds: AppServices.playback.position)
         }
