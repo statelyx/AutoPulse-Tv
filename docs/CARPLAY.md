@@ -1,21 +1,19 @@
 # CarPlay video integration
 
-## Two explicit builds
+## One build
 
-`xcodegen generate` builds the iPhone/iPad application with direct video playback and AirPlay. It makes no CarPlay entitlement request.
+`xcodegen generate` uses project.yml for iPhone/iPad, AirPlay and CarPlay. It includes CarPlay sources, Support/Info.plist scene metadata, and both com.apple.developer.carplay-audio and com.apple.developer.carplay-video entitlements. Apple must authorize these on the App ID; development and App Store profiles must contain them. Entitlement files alone grant no capability.
 
-`xcodegen generate --spec project-carplay.yml` additionally compiles the native CarPlay scene, declares the video entitlement, and requires iOS 27+. The Apple account and provisioning profile must already be authorized for that entitlement. Merely placing the entitlement in a file does not grant it.
-
-The CarPlay source code has not been compiled with an Apple SDK or tested in a vehicle in this environment. It is an integration implementation awaiting validation, not evidence that CarPlay video works on an arbitrary vehicle.
+The app deployment target remains iOS 17; CarPlaySceneDelegate retains @available(iOS 27.0, *). No separate spec or compilation flag is used. The changed unified build still requires Apple SDK and vehicle validation.
 
 ## Rendering and transport
 
 - Content selection uses CPListTemplate / CPListItem. CarPlay owns layout, resolution, orientation and input presentation. The app doesn't crop or mirror the iPhone display.
 - CPSessionConfiguration.supportsVideoPlayback checks receiver capability. It is not a measurement of vehicle movement or permission to show video at that instant.
-- List items declare CPPlaybackConfiguration with video preferred presentation. Selected items feed the shared AVPlayer. System video presentation and controls own the external playback experience.
+- List items declare CPPlaybackConfiguration with video preferred presentation when supported and audio otherwise. Selected items feed the shared AVPlayer. System video presentation and controls own the external playback experience.
 - AVPlayer allows external playback and automatic external playback while an external screen is active. No custom video encoder, screen capture or framebuffer transport exists.
 - Playback pause/resume buttons are native template buttons. Disconnect records the position and stops the session.
-- Unsupported receivers receive an explanation. Actual video availability and audio fallback remain under the system and vehicle's control.
+- Receivers without video support retain the source list, use audio presentation and show the Ses label. Actual playback remains under system and vehicle control.
 
 ## Browser and latency limits
 
@@ -32,4 +30,4 @@ No fixed end-to-end delay is promised. Measure on real hardware: startup time, A
 - https://developer.apple.com/documentation/carplay/cpsessionconfiguration/supportsvideoplayback
 - https://developer.apple.com/documentation/avfoundation/avplayer/usesexternalplaybackwhileexternalscreenisactive
 
-After choosing the CarPlay build, update store and review metadata to describe that exact tested build. Existing store drafts describe the default iPhone build.
+Use store/APPSTORE-CONNECT.md and store/REVIEW-NOTES.md for the new build. Build 4 predates this unified CarPlay configuration and must not be submitted as the new build.

@@ -19,30 +19,6 @@ workflows:
       - build/simulator-test.log
       - build/TestResults.xcresult
       - build/DerivedData/Build/Products/Debug-iphonesimulator/AutoPulseTV.app
-  carplay-compile:
-    name: AutoPulseTV CarPlay compile check (no receiver)
-    instance_type: mac_mini_m2
-    max_build_duration: 30
-    environment:
-      xcode: '27.1'
-    scripts:
-      - name: Generate CarPlay project
-        script: |
-          set -euo pipefail
-          command -v xcodegen || brew install xcodegen
-          xcodegen generate --spec project-carplay.yml
-      - name: Compile CarPlay variant without signing
-        script: |
-          set -euo pipefail
-          mkdir -p build
-          xcodebuild -project AutoPulseTV.xcodeproj -scheme AutoPulseTV \
-            -configuration Debug -sdk iphonesimulator \
-            -destination 'generic/platform=iOS Simulator' \
-            -derivedDataPath build/CarPlayDerivedData \
-            CODE_SIGNING_ALLOWED=NO build 2>&1 | tee build/carplay-compile.log
-    artifacts:
-      - build/carplay-compile.log
-      - build/CarPlayDerivedData/Build/Products/Debug-iphonesimulator/AutoPulseTV.app
   testflight:
     name: AutoPulseTV signed TestFlight build
     instance_type: mac_mini_m2
@@ -56,14 +32,12 @@ workflows:
         bundle_identifier: com.statelyxx.autopulsetv
       vars:
         BUNDLE_ID: com.statelyxx.autopulsetv
-        # Use project-carplay.yml only after entitlement and compatible-car tests.
-        PROJECT_SPEC: project.yml
     scripts:
       - name: Generate project
         script: |
           set -euo pipefail
           command -v xcodegen || brew install xcodegen
-          xcodegen generate --spec "$PROJECT_SPEC"
+          xcodegen generate
       - name: Use configured signing identities
         script: xcode-project use-profiles
       - name: Archive and export
@@ -77,6 +51,4 @@ workflows:
     publishing:
       app_store_connect:
         auth: integration
-        # Upload normally; App Store Connect's existing internal group has
-        # automatic distribution enabled. External beta review is a separate step.
-        submit_to_testflight: false
+        submit_to_testflight: true

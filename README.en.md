@@ -2,7 +2,7 @@
 
 [![iOS verification](https://github.com/statelyx/AutoPulse-Tv/actions/workflows/ios.yml/badge.svg?branch=main)](https://github.com/statelyx/AutoPulse-Tv/actions/workflows/ios.yml)
 
-A native iPhone/iPad personal media library, embedded WebKit browser and optional CarPlay video integration.
+A native iPhone/iPad personal media library, embedded WebKit browser and CarPlay integration in the same build.
 
 [Türkçe](README.md) · [Architecture](docs/ARCHITECTURE.md) · [Codemagic setup](docs/CODEMAGIC.md) · [Changelog](CHANGELOG.md)
 
@@ -12,7 +12,7 @@ A native iPhone/iPad personal media library, embedded WebKit browser and optiona
 - Search, favorites, groups and resume positions for supported on-demand content.
 - Remote/local M3U import, bounded downloads, URL deduplication and JSON backups.
 - Embedded phone browser with navigation controls, progress/error state and Safari fallback.
-- Separate CarPlay video specification with native templates and entitlement configuration.
+- Unified CarPlay audio/video configuration with native templates.
 
 No channels or licensed streaming catalog are supplied.
 
@@ -22,7 +22,7 @@ Version 1.1.0 (4) is Testing in the existing internal TestFlight group after a s
 
 [Latest simulator CI](https://github.com/statelyx/AutoPulse-Tv/actions/runs/42227322556) passed 10 unit and 2 UI tests and captured four real app pages on both iPhone and iPad. [Screenshot pack](store/AutoPulseTV-1.1-AppStore.zip) · [Release details](docs/RELEASE-1.1.md).
 
-Files/Photos offline import, full-screen photo zoom/slideshow, still-image AirPlay presentation, PiP, discovery shortcuts and Xtream-compatible playlist import are included. Physical AirPlay/vehicle behavior and the optional CarPlay build remain unverified.
+Files/Photos offline import, full-screen photo zoom/slideshow, still-image AirPlay presentation, PiP, discovery shortcuts and Xtream-compatible playlist import are included. Physical AirPlay/vehicle behavior and the updated unified build remain unverified.
 
 ## Build
 
@@ -38,7 +38,7 @@ bash scripts/simulator.sh
 
 Default target: iOS 17+. Scheme: AutoPulseTV. Bundle ID: com.statelyxx.autopulsetv. Configure your own signing team for physical devices.
 
-The optional `project-carplay.yml` requires an iOS 27+ SDK, Apple's approved video entitlement and a compatible vehicle. It does not mirror the phone framebuffer. The browser runs on iPhone/iPad; system and receiver rules govern external video availability.
+One `project.yml` includes iPhone/iPad and CarPlay sources, explicit scene metadata and audio/video entitlements. The app targets iOS 17+; the delegate retains its iOS 27 availability annotation. Signed builds require Apple-authorized App ID capabilities and matching profiles. Unsupported video receivers retain the list in audio mode. The browser runs on iPhone/iPad; system and receiver rules govern video availability.
 
 ## CI and distribution
 

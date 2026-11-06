@@ -2,7 +2,7 @@
 
 ## Environment
 
-Use macOS with Xcode and XcodeGen for iOS builds. The default app targets iOS 17+. The optional CarPlay specification targets iOS 27+ and requires a corresponding SDK and entitlement authorization for signed deployment.
+Use macOS with Xcode and XcodeGen for iOS builds. The unified app targets iOS 17+. CarPlay sources are included by the same project.yml, with an iOS 27 availability annotation on the delegate. Signed builds require approved CarPlay audio/video capabilities and matching profiles.
 
 ```sh
 xcodegen generate
@@ -10,7 +10,7 @@ open AutoPulseTV.xcodeproj
 bash scripts/simulator.sh
 ```
 
-Keep changes in project.yml and project-carplay.yml rather than editing generated Xcode projects. Generated projects, build products, local tools and signing files are excluded from Git.
+Keep changes in project.yml rather than editing generated Xcode projects. Generated projects, build products, local tools and signing files are excluded from Git.
 
 ## Validation
 

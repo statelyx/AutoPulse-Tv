@@ -105,11 +105,7 @@ struct InformationScreen: View {
                     Text("Kendi video kaynaklarını kaydet, listelerini düzenle ve desteklenen alıcılarda AirPlay kullan.")
                 }
                 Section("Araç uyumluluğu") {
-                    #if CARPLAY_ENABLED
-                    Text("Bu derleme, Apple CarPlay video yetkisi ve Video in the Car destekli bir araç gerektirir. Kütüphane CarPlay'in ekranına uyarlanan yerel şablonlarıyla gösterilir.")
-                    #else
-                    Text("Bu sürüm iPhone/iPad ve AirPlay oynatıcısıdır. CarPlay ana ekranında uygulama veya web tarayıcısı arayüzü içermez.")
-                    #endif
+                    Text("Tek derleme iPhone/iPad, AirPlay ve CarPlay kütüphanesini içerir. CarPlay için Apple tarafından onaylı audio/video yetkileri ve uygun imzalama profili gerekir. Video desteklenmediğinde liste ses modunda kalır.")
                     Text("Araçta video için resmi Video in the Car desteği gerekir. Eski CarPlay sistemlerinde videoyu etkinleştirme veya hareket kısıtlamasını aşma özelliği bulunmaz.")
                     Text("Araç ekranında video yalnızca park halinde kullanılmalıdır.").foregroundStyle(Theme.accent)
                 }

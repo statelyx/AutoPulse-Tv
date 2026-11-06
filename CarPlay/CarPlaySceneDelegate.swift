@@ -2,7 +2,7 @@ import CarPlay
 import Combine
 import AVFoundation
 
-/// Compiled only by project-carplay.yml. Needs Apple's approved video entitlement.
+/// Included by project.yml. Requires Apple's approved CarPlay entitlements.
 /// No phone framebuffer capture, ReplayKit, hidden web view or navigation-category workaround.
 @available(iOS 27.0, *)
 @MainActor
@@ -37,16 +37,12 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
     private func refresh() {
         guard let controller, let configuration else { return }
         // Capability is not a motion/park signal. iOS/vehicle retain video-availability control.
-        guard configuration.supportsVideoPlayback else {
-            let item = CPListItem(text: "Araç video desteği bulunamadı", detailText: "Video in the Car destekli bir sistem gerekir.")
-            item.isEnabled = false
-            controller.setRootTemplate(CPListTemplate(title: "AutoPulse TV", sections: [CPListSection(items: [item])]), animated: false, completion: nil)
-            return
-        }
+        let videoOK = configuration.supportsVideoPlayback
         let sources = AppServices.library.sources.sorted { $0.isFavorite && !$1.isFavorite }
         let items = sources.prefix(CPListTemplate.maximumItemCount).map { source -> CPListItem in
-            let row = CPListItem(text: source.title, detailText: source.group, image: UIImage(systemName: source.mediaKind == .photo ? "photo" : "play.rectangle"))
-            row.playbackConfiguration = CPPlaybackConfiguration(preferredPresentation: .video, playbackAction: .play,
+            let detail = videoOK ? source.group : [source.group, "Ses"].filter { !$0.isEmpty }.joined(separator: " · ")
+            let row = CPListItem(text: source.title, detailText: detail, image: UIImage(systemName: source.mediaKind == .photo ? "photo" : "play.rectangle"))
+            row.playbackConfiguration = CPPlaybackConfiguration(preferredPresentation: videoOK ? .video : .audio, playbackAction: .play,
                 elapsedTime: CMTime(seconds: source.resumeTime, preferredTimescale: 600), duration: .zero)
             row.handler = { _, completion in
                 if let previous = AppServices.playback.source {
@@ -57,10 +53,10 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
             }
             return row
         }
-        let empty = CPListItem(text: "Kütüphanen boş", detailText: "Park halindeyken iPhone'dan kaynak ekle.")
+        let empty = CPListItem(text: "Kütüphanen boş. Park halindeyken iPhone'dan kaynak ekle.", detailText: nil)
         empty.isEnabled = false
         let section = CPListSection(items: items.isEmpty ? [empty] : items)
-        let template = CPListTemplate(title: "AutoPulse TV", sections: [section])
+        let template = CPListTemplate(title: videoOK ? "AutoPulse TV" : "AutoPulse TV — Ses", sections: [section])
         let pause = CPBarButton(title: "Duraklat") { _ in AppServices.playback.player.pause() }
         let resume = CPBarButton(title: "Oynat") { _ in AppServices.playback.player.play() }
         template.trailingNavigationBarButtons = [pause, resume]

@@ -9,29 +9,38 @@ targets:
     platform: iOS
     sources:
       - Sources
+      - CarPlay
       - Resources
+    entitlements:
+      path: CarPlay/AutoPulseTV.entitlements
     info:
-      path: build/AutoPulseTV-Info.plist
+      path: Support/Info.plist
       properties:
+        CFBundleDisplayName: AutoPulse TV
+        UILaunchScreen: {}
+        ITSAppUsesNonExemptEncryption: false
+        UIBackgroundModes:
+          - audio
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
-        ITSAppUsesNonExemptEncryption: false
-        UIBackgroundModes:
-          - audio
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true
+          UISceneConfigurations:
+            CPTemplateApplicationSceneSessionRoleApplication:
+              - UISceneClassName: CPTemplateApplicationScene
+                UISceneConfigurationName: AutoPulseTV CarPlay
+                UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).CarPlaySceneDelegate
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.statelyxx.autopulsetv
         MARKETING_VERSION: '1.1.0'
-        CURRENT_PROJECT_VERSION: '1'
+        CURRENT_PROJECT_VERSION: '5'
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        INFOPLIST_KEY_CFBundleDisplayName: AutoPulse TV
         SWIFT_VERSION: '5.0'
-        GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_UILaunchScreen_Generation: YES
-        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        GENERATE_INFOPLIST_FILE: NO
         TARGETED_DEVICE_FAMILY: '1,2'
   AutoPulseTVTests:
     type: bundle.unit-test
@@ -42,6 +51,8 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/AutoPulseTV.app/AutoPulseTV
+        BUNDLE_LOADER: $(TEST_HOST)
   AutoPulseTVUITests:
     type: bundle.ui-testing
     platform: iOS

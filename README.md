@@ -6,7 +6,7 @@
 
 **Kendi video kaynakların, kişisel kütüphanen ve uygulama içi web tarayıcın.**
 
-AutoPulse TV; doğrudan video bağlantılarını ve M3U listelerini kaydetmek, aramak ve oynatmak için geliştirilen yerel bir iOS uygulamasıdır. AirPlay hedef seçimi ve ayrı bir resmi CarPlay video entegrasyonu içerir.
+AutoPulse TV; doğrudan video bağlantılarını ve M3U listelerini kaydetmek, aramak ve oynatmak için geliştirilen yerel bir iOS uygulamasıdır. AirPlay hedef seçimi ve aynı build içindeki resmi CarPlay entegrasyonu içerir.
 
 [English](README.en.md) · [Codemagic kurulumu](docs/CODEMAGIC.md) · [Mimari](docs/ARCHITECTURE.md) · [Değişiklikler](CHANGELOG.md)
 
@@ -41,7 +41,7 @@ Dosyalar/Fotoğraflar içe aktarma, yerel video/fotoğraf, tam ekran zoom/slayt,
 
 ![Dört farklı uygulama sayfası](store/screenshots/v1.1/preview.jpg)
 
-Fiziksel AirPlay/araç testi ve ayrı CarPlay build doğrulaması bekliyor. App Store genel yayınına gönderilmedi.
+Yeni tek build yapılandırmasının Apple SDK ve fiziksel AirPlay/araç doğrulaması bekliyor. App Store genel yayınına gönderilmedi.
 
 ## Mac üzerinde çalıştırma
 
@@ -76,24 +76,26 @@ Depo kökünde [codemagic.yaml](codemagic.yaml) hazırdır:
 ## CarPlay sürümü
 
 ```sh
-xcodegen generate --spec project-carplay.yml
+xcodegen generate
 ```
 
-Bu yapılandırma iOS 27+ SDK, Apple'ın uygun CarPlay video yetkisi ve desteklenen araç gerektirir. Normal iPhone build'inin yeşil CI sonucu CarPlay sürümünün çalıştığını kanıtlamaz. Araç ekranını sistem şablonları düzenler; telefon ekranı yansıtılmaz. Tarayıcı iPhone/iPad üzerindedir. Video uygunluğu sistem ve araç tarafından kontrol edilir.
+Tek `project.yml`, iPhone/iPad ve CarPlay kaynaklarını, explicit Info.plist sahnesini ve audio/video entitlement dosyasını içerir. Uygulamanın minimum sürümü iOS 17'dir; CarPlay delegate mevcut `@available(iOS 27.0, *)` sınırını korur. İmzalama için App ID ve profillerde Apple'ın CarPlay yetkileri gerekir. Video desteklenmiyorsa kaynak listesi ses modunda kalır. Video kullanımını sistem ve araç sınırlar; tarayıcı telefonda kalır.
 
 [CarPlay entegrasyonu ve sınırları](docs/CARPLAY.md)
+
+[CarPlay görevleri ve durumları](docs/CARPLAY-TASKS.md)
 
 ## Proje yapısı
 
 ```text
 Sources/              SwiftUI, kütüphane, oynatıcı ve WebKit
-CarPlay/              İsteğe bağlı araç sahnesi ve entitlement
+CarPlay/              Araç sahnesi ve audio/video entitlement
 Resources/            İkon ve gizlilik manifesti
 Tests/ · UITests/     Model ve kullanıcı akışı testleri
 scripts/              Simülatör ve statik doğrulama araçları
 docs/                 Mimari, CI kanıtları ve kurulum rehberleri
 store/                Henüz yayımlanmamış mağaza/gizlilik taslakları
-project*.yml          XcodeGen proje tanımları
+project.yml           Tek XcodeGen proje tanımı
 codemagic.yaml        Simülatör ve TestFlight iş akışları
 ```
 
