@@ -1,3 +1,23 @@
+# Teslim durumu — 9 Kasım 2026
+
+## Güncel dağıtım: 1.1.0 (12)
+
+Tüm çalışma alanı değişiklikleri 7c35956 commit'i ile GitHub main dalına gönderildi.
+Codemagic build 12 (6af1b5310e96298b1e677037), bu kaynakla imzalı arşivi oluşturdu
+ve App Store Connect yüklemesini hatasız tamamladı. Apple işleme adımı tamamlandı;
+AutoPulse Dahili Test grubunda 1.1.0 (12) Testing durumunda ve kurulum gözlendi.
+
+Codemagic dış TestFlight beta incelemesini de denedi; Feedback Email ve beta review
+iletişim bilgileri (ad, soyad, telefon, e-posta) eksik olduğu için bu son adım
+başarısız oldu. Bu nedenle Codemagic toplam durumu "finished with post-processing
+failed" olsa da imzalı derleme, yükleme ve dahili test erişimi başarılıdır.
+Genel App Store incelemesine gönderilmedi. Gerçek araç testi yapılmadı.
+
+GitHub Actions 42613005535 son kontrolde çalışıyordu; test başarısı henüz doğrulanmadı.
+Kanıt: docs/verification/2026-11-09-build-12.json ve testflight-build-12-testing.png.
+
+## Önceki kayıt (6 Kasım 2026)
+
 # Teslim durumu — 6 Kasım 2026
 
 ## Yeni tek-build CarPlay çalışması

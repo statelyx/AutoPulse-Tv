@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-09",
+  "source_commit": "7c3595670a0ef80fa808bf5b9fb1f378befb24e8",
+  "github_push": "main verified",
+  "codemagic_build_number": 12,
+  "codemagic_build_id": "6af1b5310e96298b1e677037",
+  "codemagic_url": "https://codemagic.io/app/6aedac2730f39d49d7284dcf/build/6af1b5310e96298b1e677037",
+  "archive": "success",
+  "app_store_connect_upload": "success",
+  "version": "1.1.0",
+  "build": "12",
+  "delivery_uuid": "dc88dad5-4908-4b79-9680-a7692176665a",
+  "testflight_internal_group": "AutoPulse Dahili Test",
+  "testflight_internal_status": "Testing",
+  "installation_observed": true,
+  "external_beta_review": "failed: missing feedback email and review contact first name, last name, phone number, email",
+  "public_app_store_submission": "not submitted",
+  "github_actions_run_id": 42613005535,
+  "github_actions_status_at_observation": "in_progress",
+  "vehicle_test": "not run",
+  "proof": "docs/verification/testflight-build-12-testing.png"
+}
