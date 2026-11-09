@@ -2,6 +2,7 @@ import SwiftUI
 
 @main
 struct AutoPulseTVApp: App {
+    @UIApplicationDelegateAdaptor(AutoPulseAppDelegate.self) private var appDelegate
     @StateObject private var library = AppServices.library
     @StateObject private var playback = AppServices.playback
     @State private var fixturesReady = false

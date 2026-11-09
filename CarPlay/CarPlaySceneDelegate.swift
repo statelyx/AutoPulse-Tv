@@ -9,6 +9,9 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
     private var subscriptions = Set<AnyCancellable>()
     private let library = CPListTemplate(title: "Kütüphane", sections: [])
     private let favorites = CPListTemplate(title: "Favoriler", sections: [])
+    private let discover = CPListTemplate(title: "Keşfet", sections: [])
+    private let browserGate = CarBrowserParkGate.shared
+    private let browserLink = CarBrowserLink.shared
     private let groups = CPListTemplate(title: "Gruplar", sections: [])
     private let playback = CPListTemplate(title: "Oynatıcı", sections: [])
     private var openGroup: (name: String, template: CPListTemplate)?
@@ -18,13 +21,20 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         configuration = CPSessionConfiguration(delegate: self)
         for (template, title, symbol) in [(library, "Kütüphane", "square.grid.2x2"),
                                           (favorites, "Favoriler", "heart.fill"),
-                                          (groups, "Gruplar", "folder"),
+                                          (discover, "Keşfet", "globe"),
                                           (playback, "Oynatıcı", "play.circle")] {
             template.tabTitle = title
             template.tabImage = UIImage(systemName: symbol)
         }
+        library.trailingNavigationBarButtons = [CPBarButton(title: "Gruplar") { [weak self] _ in
+            guard let self else { return }
+            self.controller?.pushTemplate(self.groups, animated: true, completion: nil)
+        }]
+        browserGate.start()
+        browserGate.objectWillChange.sink { [weak self] _ in self?.scheduleRefresh() }.store(in: &subscriptions)
+        browserLink.objectWillChange.sink { [weak self] _ in self?.scheduleRefresh() }.store(in: &subscriptions)
         refresh()
-        interfaceController.setRootTemplate(CPTabBarTemplate(templates: [library, favorites, groups, playback]), animated: false) { _, error in
+        interfaceController.setRootTemplate(CPTabBarTemplate(templates: [library, favorites, discover, playback]), animated: false) { _, error in
             if let error { AppServices.library.message = error.localizedDescription }
         }
         AppServices.library.$sources.sink { [weak self] _ in self?.scheduleRefresh() }.store(in: &subscriptions)
@@ -35,6 +45,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
 
     func templateApplicationScene(_ scene: CPTemplateApplicationScene, didDisconnectInterfaceController interfaceController: CPInterfaceController) {
         savePosition()
+        if !browserLink.connected { browserGate.stop() }
         subscriptions.removeAll()
         openGroup = nil
         configuration = nil
@@ -85,6 +96,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
             update(openGroup.template, sources: sources.filter { $0.group == openGroup.name }, empty: "Grup boş", detail: nil)
         }
         refreshPlayback()
+        refreshDiscover()
     }
 
     private func update(_ template: CPListTemplate, sources: [MediaSource], empty: String, detail: String?) {
@@ -121,8 +133,55 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         }
         items.append(message(videoSupported ? "Video destekli oturum" : "Ses oturumu",
                              videoSupported ? "Video kullanılabilirliğini iOS ve araç belirler." : "Bu bağlantıda video desteği bildirilmedi."))
-        items.append(message("Web tarayıcısı iPhone'da", "Web siteleri için iPhone'daki Keşfet sekmesini kullan. Bu CarPlay ekranı web sayfası göstermez."))
+        items.append(message("Web tarayıcısı", "Keşfet sekmesinden tarayıcı durumunu ve site kısayollarını görebilirsin."))
         playback.updateSections([CPListSection(items: items)])
+    }
+
+    private func refreshDiscover() {
+        let status = browserLink.connected
+            ? browserGate.status
+            : "Araç tarayıcı ekranı bağlanmadı. Bu iOS / araç / imzalama profili tarayıcı penceresini açmamış olabilir."
+        let browser = CPListItem(text: "AutoPulse TV · Tarayıcı",
+                                 detailText: browserGate.browserEnabled && browserLink.connected ? "Enabled · Park onaylandı" : "Disabled · " + status,
+                                 image: UIImage(systemName: "globe"))
+        browser.handler = { [weak self] _, completion in
+            self?.showBrowserStatus()
+            completion()
+        }
+        let shortcuts = WebShortcut.defaults.map { shortcut -> CPListItem in
+            let item = CPListItem(text: shortcut.title, detailText: "Park hâlinde araç tarayıcısında aç",
+                                  image: UIImage(systemName: shortcut.symbol))
+            item.handler = { [weak self] _, completion in
+                guard let self else { completion(); return }
+                // Keep entries visible; enforce the lock at the navigation boundary.
+                guard true, self.browserGate.browserEnabled, self.browserLink.connected else {
+                    self.showBrowserStatus()
+                    completion()
+                    return
+                }
+                self.browserLink.address = URL(string: shortcut.address)
+                completion()
+            }
+            return item
+        }
+        discover.updateSections([CPListSection(items: [browser]), CPListSection(items: shortcuts, header: "Hızlı erişim", sectionIndexTitle: nil)])
+    }
+
+    private func showBrowserStatus() {
+        let canConfirm = browserLink.connected && browserGate.stationary && !browserGate.confirmed
+        var actions = [CPAlertAction(title: "Tamam", style: .cancel) { [weak self] _ in
+            self?.controller?.dismissTemplate(animated: true, completion: nil)
+        }]
+        if canConfirm {
+            actions.insert(CPAlertAction(title: "Park ettim", style: .default) { [weak self] _ in
+                guard let self else { return }
+                if self.browserGate.stationary && self.browserLink.connected { self.browserGate.confirmed = true }
+                self.controller?.dismissTemplate(animated: true, completion: nil)
+            }, at: 0)
+        }
+        let detail = browserLink.connected ? browserGate.status
+            : "iOS araç tarayıcı penceresini bağlamadı. Park onayı tek başına bu pencereyi açamaz."
+        controller?.presentTemplate(CPAlertTemplate(titleVariants: ["Tarayıcı", detail], actions: actions), animated: true, completion: nil)
     }
 
     private func message(_ title: String, _ detail: String?) -> CPListItem {

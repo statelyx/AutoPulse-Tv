@@ -23,6 +23,7 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         UILaunchScreen: {}
         ITSAppUsesNonExemptEncryption: false
+        NSLocationWhenInUseUsageDescription: Araç ekranındaki tarayıcıyı yalnız araç dururken açmak ve hareket başladığında kilitlemek için hız bilgisi kullanılır.
         UIBackgroundModes:
           - audio
         UISupportedInterfaceOrientations:
@@ -33,6 +34,10 @@ targets:
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: true
           UISceneConfigurations:
+            UIWindowSceneSessionRoleCarPlay:
+              - UISceneClassName: UIWindowScene
+                UISceneConfigurationName: AutoPulseTV Park Browser
+                UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).CarBrowserSceneDelegate
             CPTemplateApplicationSceneSessionRoleApplication:
               - UISceneClassName: CPTemplateApplicationScene
                 UISceneConfigurationName: AutoPulseTV CarPlay

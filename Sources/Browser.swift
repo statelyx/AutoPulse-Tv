@@ -93,6 +93,7 @@ final class BrowserModel: NSObject, ObservableObject, WKNavigationDelegate, WKUI
 
 struct BrowserScreen: View {
     let url: URL
+    @ObservedObject private var carBrowser = CarBrowserLink.shared
     @StateObject private var model = BrowserModel()
     @State private var address = ""
     @State private var external: WebDestination?
@@ -126,6 +127,13 @@ struct BrowserScreen: View {
                         Image(systemName: model.loading ? "xmark" : "arrow.clockwise")
                     }.accessibilityLabel(model.loading ? "Durdur" : "Yenile")
                     Spacer()
+                    if carBrowser.connected {
+                        Button {
+                            carBrowser.address = model.webView.url
+                        } label: { Image(systemName: "car.side") }
+                        .disabled(model.webView.url == nil)
+                        .accessibilityLabel("Bu sayfayı araç tarayıcısında aç")
+                    }
                     Button("Safari") {
                         if let current = model.webView.url { external = WebDestination(url: current) }
                     }.accessibilityLabel("Safari görünümünde aç")
@@ -150,4 +158,9 @@ struct WebSurface: UIViewRepresentable {
     @ObservedObject var model: BrowserModel
     func makeUIView(context: Context) -> WKWebView { model.webView }
     func updateUIView(_ view: WKWebView, context: Context) {}
+    static func dismantleUIView(_ view: WKWebView, coordinator: ()) {
+        view.stopLoading()
+        view.pauseAllMediaPlayback(completionHandler: nil)
+        view.loadHTMLString("", baseURL: nil)
+    }
 }

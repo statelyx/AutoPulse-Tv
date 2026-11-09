@@ -1,0 +1,17 @@
+{
+  "commit": "1827e05",
+  "github_push": "main verified and updated",
+  "failed_attempt": {"build_number": 9, "id": "6aee104824e1ec237556e4cf", "reason": "Codemagic stored profile did not include com.apple.developer.carplay-audio"},
+  "fix": "Uploaded regenerated Apple profile and selected it explicitly in codemagic.yaml",
+  "build_number": 10,
+  "build_id": "6aee117024e1ec237556e529",
+  "archive": "success",
+  "app_store_connect_upload": "success",
+  "delivery_uuid": "c10c9b7f-769b-4baa-93f6-e31c3400c58a",
+  "ipa_version": "1.0",
+  "ipa_build": "1",
+  "ipa_carplay_scene_present": true,
+  "embedded_profile_carplay_audio": true,
+  "testflight": "Apple processing pending at last observation",
+  "vehicle_test": "not run"
+}
