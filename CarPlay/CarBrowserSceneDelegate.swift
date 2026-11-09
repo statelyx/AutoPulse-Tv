@@ -56,7 +56,7 @@ final class CarBrowserSceneDelegate: UIResponder, UIWindowSceneDelegate {
 }
 
 @MainActor
-final class CarBrowserParkGate: NSObject, ObservableObject, CLLocationManagerDelegate {
+final class CarBrowserParkGate: NSObject, ObservableObject {
     static let shared = CarBrowserParkGate()
     var browserEnabled: Bool { true }
     @Published private(set) var stationary = true
@@ -126,6 +126,8 @@ final class CarBrowserParkGate: NSObject, ObservableObject, CLLocationManagerDel
         }
     }
 }
+extension CarBrowserParkGate: @preconcurrency CLLocationManagerDelegate {}
+
 /*
 
 private struct CarBrowserScreen: View {
