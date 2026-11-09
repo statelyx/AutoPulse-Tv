@@ -1,9 +1,13 @@
+import SwiftUI
 import CarPlay
 import Combine
 import AVFoundation
 
 @MainActor
 final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate, CPSessionConfigurationDelegate {
+    private var windowMode = true
+    private var isConnected = false
+    private var browserWindow: CPWindow?
     private var controller: CPInterfaceController?
     private var configuration: CPSessionConfiguration?
     private var subscriptions = Set<AnyCancellable>()
@@ -16,7 +20,34 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
     private let playback = CPListTemplate(title: "Oynatıcı", sections: [])
     private var openGroup: (name: String, template: CPListTemplate)?
 
+    func templateApplicationScene(_ scene: CPTemplateApplicationScene,
+                                  didConnect interfaceController: CPInterfaceController,
+                                  to window: CPWindow) {
+        guard !isConnected else { return }
+        windowMode = true
+        let gate = browserGate
+        controller = interfaceController
+        browserWindow = window
+        configuration = CPSessionConfiguration(delegate: self)
+        window.rootViewController = UIHostingController(rootView: CarBrowserScreen(gate: gate))
+        CarBrowserLink.shared.connected = true
+        window.makeKeyAndVisible()
+        gate.start()
+        isConnected = true
+    }
+
+    func templateApplicationScene(_ scene: CPTemplateApplicationScene,
+                                  didDisconnect interfaceController: CPInterfaceController,
+                                  from window: CPWindow) {
+        guard isConnected || browserWindow != nil else { return }
+        window.isHidden = true
+        teardown()
+    }
+
     func templateApplicationScene(_ scene: CPTemplateApplicationScene, didConnect interfaceController: CPInterfaceController) {
+        guard !isConnected else { return }
+        guard browserWindow == nil else { return }
+        windowMode = true
         controller = interfaceController
         configuration = CPSessionConfiguration(delegate: self)
         for (template, title, symbol) in [(library, "Kütüphane", "square.grid.2x2"),
@@ -34,6 +65,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         browserGate.objectWillChange.sink { [weak self] _ in self?.scheduleRefresh() }.store(in: &subscriptions)
         browserLink.objectWillChange.sink { [weak self] _ in self?.scheduleRefresh() }.store(in: &subscriptions)
         refresh()
+        guard windowMode else { return }
         interfaceController.setRootTemplate(CPTabBarTemplate(templates: [library, favorites, discover, playback]), animated: false) { _, error in
             if let error { AppServices.library.message = error.localizedDescription }
         }
@@ -41,11 +73,23 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         AppServices.playback.$source.sink { [weak self] _ in self?.scheduleRefresh() }.store(in: &subscriptions)
         AppServices.playback.$failure.sink { [weak self] _ in self?.scheduleRefresh() }.store(in: &subscriptions)
         AppServices.playback.$loading.sink { [weak self] _ in self?.scheduleRefresh() }.store(in: &subscriptions)
+        isConnected = true
     }
 
     func templateApplicationScene(_ scene: CPTemplateApplicationScene, didDisconnectInterfaceController interfaceController: CPInterfaceController) {
+        guard isConnected || browserWindow != nil else { return }
+        teardown()
+    }
+
+    private func teardown() {
+        windowMode = false
         savePosition()
-        if !browserLink.connected { browserGate.stop() }
+        CarBrowserLink.shared.connected = false
+        CarBrowserLink.shared.address = nil
+        browserGate.stop()
+        browserWindow?.rootViewController = nil
+        browserWindow = nil
+        isConnected = false
         subscriptions.removeAll()
         openGroup = nil
         configuration = nil
@@ -63,11 +107,14 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
     }
 
     private var videoSupported: Bool {
-        if #available(iOS 26.4, *) { return configuration?.supportsVideoPlayback == true }
+        if #available(iOS 27.0, *) { return configuration?.supportsVideoPlayback == true }
         return false
     }
 
     private func refresh() {
+        guard windowMode else { return }
+        // Window mode must keep its hosting controller; templates belong to the fallback only.
+        guard browserWindow == nil else { return }
         guard controller != nil else { return }
         let sources = AppServices.library.sources.sorted {
             if $0.isFavorite != $1.isFavorite { return $0.isFavorite }
@@ -104,9 +151,10 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
             let item = CPListItem(text: source.title, detailText: source.group,
                                   image: UIImage(systemName: source.mediaKind == .photo ? "photo" : "play.rectangle"))
             item.isPlaying = AppServices.playback.source?.id == source.id && AppServices.playback.player.rate > 0
-            if #available(iOS 26.4, *) {
-                item.playbackConfiguration = CPPlaybackConfiguration(preferredPresentation: videoSupported ? .video : .audio,
+            if #available(iOS 27.0, *) {
+                let playbackConfiguration = CPPlaybackConfiguration(preferredPresentation: videoSupported ? .video : .audio,
                     playbackAction: .play, elapsedTime: CMTime(seconds: source.resumeTime, preferredTimescale: 600), duration: .zero)
+                item.playbackConfiguration = playbackConfiguration
             }
             item.handler = { [weak self] _, completion in
                 self?.savePosition()
@@ -142,7 +190,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
             ? browserGate.status
             : "Araç tarayıcı ekranı bağlanmadı. Bu iOS / araç / imzalama profili tarayıcı penceresini açmamış olabilir."
         let browser = CPListItem(text: "AutoPulse TV · Tarayıcı",
-                                 detailText: browserGate.browserEnabled && browserLink.connected ? "Enabled · Park onaylandı" : "Disabled · " + status,
+                                 detailText: browserLink.connected ? "Tarayıcı bağlı" : status,
                                  image: UIImage(systemName: "globe"))
         browser.handler = { [weak self] _, completion in
             self?.showBrowserStatus()
@@ -153,13 +201,8 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
                                   image: UIImage(systemName: shortcut.symbol))
             item.handler = { [weak self] _, completion in
                 guard let self else { completion(); return }
-                // Keep entries visible; enforce the lock at the navigation boundary.
-                guard true, self.browserGate.browserEnabled, self.browserLink.connected else {
-                    self.showBrowserStatus()
-                    completion()
-                    return
-                }
-                self.browserLink.address = URL(string: shortcut.address)
+                let url = URL(string: shortcut.address)
+                self.showBrowserStatus(destination: url)
                 completion()
             }
             return item
@@ -167,10 +210,15 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         discover.updateSections([CPListSection(items: [browser]), CPListSection(items: shortcuts, header: "Hızlı erişim", sectionIndexTitle: nil)])
     }
 
-    private func showBrowserStatus() {
+    private func showBrowserStatus(destination: URL? = nil) {
         let canConfirm = browserLink.connected && browserGate.stationary && !browserGate.confirmed
         var actions = [CPAlertAction(title: "Tamam", style: .cancel) { [weak self] _ in
-            self?.controller?.dismissTemplate(animated: true, completion: nil)
+            guard let self else { return }
+            self.controller?.dismissTemplate(animated: true) { [weak self] _, error in
+                guard let self else { return }
+                if let error { AppServices.library.message = error.localizedDescription }
+                self.continueBrowser(destination: destination)
+            }
         }]
         if canConfirm {
             actions.insert(CPAlertAction(title: "Park ettim", style: .default) { [weak self] _ in
@@ -182,6 +230,12 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         let detail = browserLink.connected ? browserGate.status
             : "iOS araç tarayıcı penceresini bağlamadı. Park onayı tek başına bu pencereyi açamaz."
         controller?.presentTemplate(CPAlertTemplate(titleVariants: ["Tarayıcı", detail], actions: actions), animated: true, completion: nil)
+    }
+
+    private func continueBrowser(destination: URL?) {
+        // Only the CPWindow supplied by CarPlay is used; never synthesize a window.
+        if let destination { browserLink.address = destination }
+        browserWindow?.makeKeyAndVisible()
     }
 
     private func message(_ title: String, _ detail: String?) -> CPListItem {

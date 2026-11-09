@@ -11,6 +11,7 @@ workflows:
           set -euo pipefail
           command -v xcodegen || brew install xcodegen
           xcodegen generate
+          plutil -extract UIApplicationSceneManifest xml1 -o - Support/Info.plist
       - name: Build simulator and capture actual app
         script: bash scripts/simulator.sh
     artifacts:

@@ -2,14 +2,11 @@ import Foundation
 import XCTest
 
 final class CarPlayConfigurationTests: XCTestCase {
-    func testParkedBrowserSceneUsesItsOwnWindowDelegate() throws {
+    func testBuild5DisablesRawBrowserScene() throws {
         let manifest = try XCTUnwrap(Bundle.main.object(forInfoDictionaryKey: "UIApplicationSceneManifest") as? [String: Any])
         let configurations = try XCTUnwrap(manifest["UISceneConfigurations"] as? [String: Any])
-        let scenes = try XCTUnwrap(configurations["UIWindowSceneSessionRoleCarPlay"] as? [[String: Any]])
-        let scene = try XCTUnwrap(scenes.first)
-        XCTAssertEqual(scene["UISceneClassName"] as? String, "UIWindowScene")
-        XCTAssertTrue((scene["UISceneDelegateClassName"] as? String)?.hasSuffix("CarBrowserSceneDelegate") == true)
-        XCTAssertNotNil(Bundle.main.object(forInfoDictionaryKey: "NSLocationWhenInUseUsageDescription"))
+        XCTAssertNil(configurations["UIWindowSceneSessionRoleCarPlay"])
+        XCTAssertEqual(manifest["UIApplicationSupportsMultipleScenes"] as? Bool, true)
     }
 
     func testInfoPlistDeclaresCarPlayScene() throws {

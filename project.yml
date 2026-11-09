@@ -34,10 +34,6 @@ targets:
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: true
           UISceneConfigurations:
-            UIWindowSceneSessionRoleCarPlay:
-              - UISceneClassName: UIWindowScene
-                UISceneConfigurationName: AutoPulseTV Park Browser
-                UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).CarBrowserSceneDelegate
             CPTemplateApplicationSceneSessionRoleApplication:
               - UISceneClassName: CPTemplateApplicationScene
                 UISceneConfigurationName: AutoPulseTV CarPlay

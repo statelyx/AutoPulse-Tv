@@ -17,6 +17,7 @@ final class CarBrowserLink: ObservableObject {
     @Published var address: URL?
 }
 
+// Ham rol build 5'te devre dışı, A/B testi için geri açılacak.
 final class AutoPulseAppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, configurationForConnecting session: UISceneSession,
                      options: UIScene.ConnectionOptions) -> UISceneConfiguration {
@@ -42,7 +43,6 @@ final class CarBrowserSceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: scene)
         window.rootViewController = UIHostingController(rootView: CarBrowserScreen(gate: gate))
         self.window = window
-        CarBrowserLink.shared.connected = true
         window.makeKeyAndVisible()
     }
 
@@ -50,7 +50,6 @@ final class CarBrowserSceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneWillResignActive(_ scene: UIScene) { gate.stop() }
     func sceneDidDisconnect(_ scene: UIScene) {
         gate.stop()
-        CarBrowserLink.shared.connected = false
         CarBrowserLink.shared.address = nil
         window = nil
     }
@@ -156,7 +155,7 @@ private struct CarBrowserScreen: View {
 }
 */
 
-private struct CarBrowserScreen: View {
+struct CarBrowserScreen: View {
     @ObservedObject var gate: CarBrowserParkGate
 
     var body: some View {
@@ -172,10 +171,37 @@ private struct ParkedBrowserContent: View {
     @State private var destination: WebDestination?
 
     var body: some View {
-        DiscoverScreen()
-            .onReceive(link.$address) { url in
-                if let url { destination = WebDestination(url: url) }
+        ScrollView {
+            VStack(spacing: 20) {
+                Text("Telefondan adres gönder veya aşağıdan seç")
+                    .font(.title2.bold())
+                    .multilineTextAlignment(.center)
+                shortcut("YouTube", symbol: "play.rectangle.fill", address: "https://www.youtube.com")
+                shortcut("Google", symbol: "magnifyingglass", address: "https://www.google.com")
+                shortcut("Abonelikler", symbol: "rectangle.stack.fill", address: "https://www.youtube.com/feed/subscriptions")
             }
-            .fullScreenCover(item: $destination) { BrowserScreen(url: $0.url) }
+            .padding(24)
+            .frame(maxWidth: .infinity)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(red: 0.035, green: 0.055, blue: 0.10))
+        .foregroundStyle(.white)
+        .onReceive(link.$address) { url in
+            destination = url.map { WebDestination(url: $0) }
+        }
+        .fullScreenCover(item: $destination) { BrowserScreen(url: $0.url) }
+    }
+
+    private func shortcut(_ title: String, symbol: String, address: String) -> some View {
+        Button {
+            CarBrowserLink.shared.address = URL(string: address)
+        } label: {
+            Label(title, systemImage: symbol)
+                .font(.title2.bold())
+                .frame(maxWidth: .infinity, minHeight: 64)
+        }
+        .buttonStyle(.borderedProminent)
+        .tint(.mint)
+        .foregroundStyle(.black)
     }
 }
