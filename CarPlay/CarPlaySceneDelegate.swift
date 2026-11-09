@@ -2,14 +2,12 @@ import SwiftUI
 import CarPlay
 import Combine
 import AVFoundation
-import OSLog
 
 @MainActor
 final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate, CPSessionConfigurationDelegate {
     private var windowMode = false
-    private var windowTask: Task<Void, Never>?
     private var isConnected = false
-    private var rootTemplateInstalled = false
+    private var windowTask: Task<Void, Never>?
     private var browserWindow: CPWindow?
     private var controller: CPInterfaceController?
     private var configuration: CPSessionConfiguration?
@@ -26,11 +24,10 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
     func templateApplicationScene(_ scene: CPTemplateApplicationScene,
                                   didConnect interfaceController: CPInterfaceController,
                                   to window: CPWindow) {
-        os_log("carplay cpwindow connect")
-        windowMode = true
+        guard browserWindow == nil else { return }
         windowTask?.cancel()
         windowTask = nil
-        guard browserWindow == nil else { return }
+        windowMode = true
         let gate = browserGate
         controller = interfaceController
         browserWindow = window
@@ -51,7 +48,6 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
     }
 
     func templateApplicationScene(_ scene: CPTemplateApplicationScene, didConnect interfaceController: CPInterfaceController) {
-        os_log("carplay windowless connect")
         guard !isConnected else { return }
         guard browserWindow == nil else { return }
         controller = interfaceController
@@ -70,20 +66,21 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         browserGate.start()
         browserGate.objectWillChange.sink { [weak self] _ in self?.scheduleRefresh() }.store(in: &subscriptions)
         browserLink.objectWillChange.sink { [weak self] _ in self?.scheduleRefresh() }.store(in: &subscriptions)
+        refresh()
+        isConnected = true
+        windowTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .milliseconds(600))
+            guard let self, !Task.isCancelled, self.browserWindow == nil else { return }
+            self.windowMode = false
+            self.refresh()
+            interfaceController.setRootTemplate(CPTabBarTemplate(templates: [self.library, self.favorites, self.discover, self.playback]), animated: false) { _, error in
+                if let error { AppServices.library.message = error.localizedDescription }
+            }
+        }
         AppServices.library.$sources.sink { [weak self] _ in self?.scheduleRefresh() }.store(in: &subscriptions)
         AppServices.playback.$source.sink { [weak self] _ in self?.scheduleRefresh() }.store(in: &subscriptions)
         AppServices.playback.$failure.sink { [weak self] _ in self?.scheduleRefresh() }.store(in: &subscriptions)
         AppServices.playback.$loading.sink { [weak self] _ in self?.scheduleRefresh() }.store(in: &subscriptions)
-        isConnected = true
-        windowTask?.cancel()
-        windowTask = Task { @MainActor [weak self] in
-            try? await Task.sleep(for: .milliseconds(500))
-            guard !Task.isCancelled else { return }
-            guard let self, self.browserWindow == nil, self.isConnected else { return }
-            self.windowTask = nil
-            self.windowMode = false
-            self.refresh()
-        }
     }
 
     func templateApplicationScene(_ scene: CPTemplateApplicationScene, didDisconnectInterfaceController interfaceController: CPInterfaceController) {
@@ -102,7 +99,6 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         browserWindow?.rootViewController = nil
         browserWindow = nil
         isConnected = false
-        rootTemplateInstalled = false
         subscriptions.removeAll()
         openGroup = nil
         configuration = nil
@@ -126,9 +122,9 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
 
     private func refresh() {
         guard !windowMode else { return }
+        // Window mode must keep its hosting controller; templates belong to the fallback only.
         guard browserWindow == nil else { return }
         guard controller != nil else { return }
-        guard windowTask == nil else { return }
         let sources = AppServices.library.sources.sorted {
             if $0.isFavorite != $1.isFavorite { return $0.isFavorite }
             return $0.title.localizedStandardCompare($1.title) == .orderedAscending
@@ -157,13 +153,6 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         }
         refreshPlayback()
         refreshDiscover()
-        if !rootTemplateInstalled, let controller {
-            rootTemplateInstalled = true
-            controller.setRootTemplate(CPTabBarTemplate(templates: [library, favorites, discover, playback]), animated: false) { [weak self] success, error in
-                if !success { self?.rootTemplateInstalled = false }
-                if let error { AppServices.library.message = error.localizedDescription }
-            }
-        }
     }
 
     private func update(_ template: CPListTemplate, sources: [MediaSource], empty: String, detail: String?) {
