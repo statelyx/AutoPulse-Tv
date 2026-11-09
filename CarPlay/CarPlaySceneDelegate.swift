@@ -9,6 +9,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
     private var windowMode = false
     private var windowTask: Task<Void, Never>?
     private var isConnected = false
+    private var rootTemplateInstalled = false
     private var browserWindow: CPWindow?
     private var controller: CPInterfaceController?
     private var configuration: CPSessionConfiguration?
@@ -101,6 +102,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         browserWindow?.rootViewController = nil
         browserWindow = nil
         isConnected = false
+        rootTemplateInstalled = false
         subscriptions.removeAll()
         openGroup = nil
         configuration = nil
@@ -155,8 +157,10 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         }
         refreshPlayback()
         refreshDiscover()
-        if let controller, controller.rootTemplate == nil {
-            controller.setRootTemplate(CPTabBarTemplate(templates: [library, favorites, discover, playback]), animated: false) { _, error in
+        if !rootTemplateInstalled, let controller {
+            rootTemplateInstalled = true
+            controller.setRootTemplate(CPTabBarTemplate(templates: [library, favorites, discover, playback]), animated: false) { [weak self] success, error in
+                if !success { self?.rootTemplateInstalled = false }
                 if let error { AppServices.library.message = error.localizedDescription }
             }
         }
