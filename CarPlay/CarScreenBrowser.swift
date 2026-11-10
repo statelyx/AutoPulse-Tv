@@ -169,7 +169,7 @@ final class CarBrowserSurface: UIViewController, WKNavigationDelegate {
     }
 
     private func goHome() {
-        if let address = CarBrowserLink.shared.address { load(address) }
+        if let address = CarBrowserLink.shared.address { load(address.absoluteString) }
         else if let first = WebShortcut.defaults.first { load(first.address) }
     }
 
