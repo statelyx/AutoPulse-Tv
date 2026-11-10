@@ -1,5 +1,7 @@
 # Changelog
 
+- Araç ekranına kendi penceresiyle çizilen tarayıcı eklendi; CPWindow yedeğe alındı.
+
 ## 1.1.0 (4) — Internal TestFlight, 2026-11-06
 
 - Local Files/Photos import, offline video/photo grid, groups and favorites.

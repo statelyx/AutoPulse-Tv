@@ -2,9 +2,12 @@ import SwiftUI
 import CarPlay
 import Combine
 import AVFoundation
+import OSLog
 
 @MainActor
 final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate, CPSessionConfigurationDelegate {
+    private let carOverlay = CarScreenOverlay()
+    private let log = Logger(subsystem: Bundle.main.bundleIdentifier ?? "AutoPulseTV", category: "CarBrowser")
     private var windowMode = false
     private var isConnected = false
     private var windowTask: Task<Void, Never>?
@@ -24,6 +27,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
     func templateApplicationScene(_ scene: CPTemplateApplicationScene,
                                   didConnect interfaceController: CPInterfaceController,
                                   to window: CPWindow) {
+        carOverlay.stop()
         guard browserWindow == nil else { return }
         windowTask?.cancel()
         windowTask = nil
@@ -68,6 +72,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         browserLink.objectWillChange.sink { [weak self] _ in self?.scheduleRefresh() }.store(in: &subscriptions)
         refresh()
         isConnected = true
+        carOverlay.start()
         windowTask = Task { @MainActor [weak self] in
             try? await Task.sleep(for: .milliseconds(600))
             guard let self, !Task.isCancelled, self.browserWindow == nil else { return }
@@ -89,6 +94,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
     }
 
     private func teardown() {
+        carOverlay.stop()
         windowTask?.cancel()
         windowTask = nil
         windowMode = false
@@ -202,7 +208,9 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
                                  detailText: browserLink.connected ? "Tarayıcı bağlı" : status,
                                  image: UIImage(systemName: "globe"))
         browser.handler = { [weak self] _, completion in
-            self?.showBrowserStatus()
+            guard let self else { completion(); return }
+            self.carOverlay.open(CarBrowserLink.shared.address?.absoluteString ?? WebShortcut.defaults.first?.address ?? "https://m.youtube.com")
+            if !self.carOverlay.isAttached { self.showBrowserStatus() }
             completion()
         }
         let shortcuts = WebShortcut.defaults.map { shortcut -> CPListItem in
@@ -210,8 +218,8 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
                                   image: UIImage(systemName: shortcut.symbol))
             item.handler = { [weak self] _, completion in
                 guard let self else { completion(); return }
-                let url = URL(string: shortcut.address)
-                self.showBrowserStatus(destination: url)
+                self.carOverlay.open(shortcut.address)
+                if !self.carOverlay.isAttached { self.showBrowserStatus(destination: URL(string: shortcut.address)) }
                 completion()
             }
             return item
@@ -220,6 +228,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
     }
 
     private func showBrowserStatus(destination: URL? = nil) {
+        guard !carOverlay.isAttached else { return }
         let canConfirm = browserLink.connected && browserGate.stationary && !browserGate.confirmed
         var actions = [CPAlertAction(title: "Tamam", style: .cancel) { [weak self] _ in
             guard let self else { return }
@@ -238,7 +247,21 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         }
         let detail = browserLink.connected ? browserGate.status
             : "iOS araç tarayıcı penceresini bağlamadı. Park onayı tek başına bu pencereyi açamaz."
-        controller?.presentTemplate(CPAlertTemplate(titleVariants: ["Tarayıcı", detail], actions: actions), animated: true, completion: nil)
+        let diagnostics = "iOS: \(UIDevice.current.systemVersion), ekran sayısı: \(UIScreen.screens.count), araç ekranı: \(UIScreen.screens.contains { $0.traitCollection.userInterfaceIdiom == .carPlay }), overlay: \(carOverlay.isAttached), hasNavigationEntitlement: \(hasNavigationEntitlement), videoSupported: \(videoSupported)"
+        log.notice("\(diagnostics, privacy: .public)")
+        controller?.presentTemplate(CPAlertTemplate(titleVariants: ["Tarayıcı", "\(detail)\n\(diagnostics)"], actions: actions), animated: true, completion: nil)
+    }
+
+    private var hasNavigationEntitlement: Bool {
+        guard let url = Bundle.main.url(forResource: "embedded", withExtension: "mobileprovision"),
+              let data = try? Data(contentsOf: url),
+              let profile = String(data: data, encoding: .isoLatin1),
+              let start = profile.range(of: "<?xml"),
+              let end = profile.range(of: "</plist>", range: start.lowerBound..<profile.endIndex),
+              let xml = String(profile[start.lowerBound..<end.upperBound]).data(using: .isoLatin1),
+              let plist = try? PropertyListSerialization.propertyList(from: xml, format: nil) as? [String: Any],
+              let entitlements = plist["Entitlements"] as? [String: Any] else { return false }
+        return entitlements["com.apple.developer.carplay-maps"] as? Bool == true
     }
 
     private func continueBrowser(destination: URL?) {
